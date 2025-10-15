@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tüketici Hakem Heyetleri Bilirkişi Ücret Hesaplama Robotu</title>
+    <title>Tüketici Hakem Heyetleri- Bilirkişi Ücret Hesaplama Robotu</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body {
@@ -20,6 +20,7 @@
             border-radius: 15px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             animation: fadeIn 0.5s ease-in;
+        }
         h1 {
             color: #2c3e50;
             text-align: center;
@@ -80,25 +81,28 @@
             outline: none;
             box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
         }
-        select {
+        select, input[type="text"] {
             width: 100%;
             padding: 12px;
             border: 2px solid #e0e0e0;
             border-radius: 8px;
             font-size: 16px;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+        select {
             appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%237f8c8d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
             background-repeat: no-repeat;
             background-position: right 12px center;
             background-size: 16px;
-            transition: all 0.3s ease;
         }
-        select:focus {
+        select:focus, input[type="text"]:focus {
             border-color: #3498db;
             outline: none;
             box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
         }
-        select:hover {
+        select:hover, input[type="text"]:hover {
             border-color: #bdc3c7;
         }
         .result {
@@ -181,6 +185,7 @@
             border-radius: 8px;
             margin: 10px 0;
         }
+        .help-text { color:#6c757d; font-size: 0.9em; margin-top: 6px; }
     </style>
 </head>
 <body>
@@ -188,11 +193,19 @@
         <h1>Tüketici Hakem Heyetleri<br>Bilirkişilik Ücret Hesaplama Robotu<br>
             <span class="info-badge">2025 Güncel</span>
         </h1>
-        
+
         <div class="search-container">
             <i class="fas fa-search"></i>
             <input type="text" id="searchInput" placeholder="Ürün veya hizmet ara..." onkeyup="filterCategories()">
         </div>
+
+        <div class="form-group">
+            <label for="memurKatsayi">Memur Aylık Katsayısı:</label>
+            <input type="text" id="memurKatsayi" placeholder="Örn: 0,907796" oninput="onKatsayiChange()">
+            <div class="help-text">Brüt ücret = Gösterge × Memur Aylık Katsayısı</div>
+        </div>
+
+        
 
         <div class="form-group">
             <label for="urunKategori">Ürün/Hizmet Kategorisi:</label>
@@ -210,7 +223,7 @@
             <h3>Hesaplama Sonucu:</h3>
             <table>
                 <tr>
-                    <th>Bilirkişi Ücreti</th>
+                    <th>Bilirkişi Ücreti (Brüt)</th>
                     <td id="bilirkisiUcreti">-</td>
                 </tr>
                 <tr>
@@ -218,11 +231,11 @@
                     <td id="kdvDahil">-</td>
                 </tr>
                 <tr>
-                    <th>Stopaj (%0.947)</th>
+                    <th>Stopaj (%20)</th>
                     <td id="stopaj">-</td>
                 </tr>
                 <tr>
-                    <th>Damga Vergisi (%15)</th>
+                    <th>Damga Vergisi (binde 9,48)</th>
                     <td id="damgaVergisi">-</td>
                 </tr>
                 <tr>
@@ -234,8 +247,8 @@
 
         <div class="disclaimer">
             <p><strong>Önemli Bilgilendirme:</strong></p>
-            <p>Bu hesaplama robotu, T.C. Adalet Bakanlığı'nın 2025 yılı için belirlediği Tüketici Hakem Heyetleri bilirkişilik ücret tarifesi referans alınarak hazırlanmıştır. Sunulan veriler bilgilendirme amaçlıdır ve kesin ödeme tutarlarını garanti etmemektedir.</p>
-            <p>Resmi işlemler için lütfen güncel mevzuatı ve ilgili kurumların güncel tarifelerini kontrol ediniz. Hesaplama sonuçları tahmini değerler olup, nihai ücretlendirme ilgili kurumların değerlendirmesine tabidir.</p>
+            <p>Bu hesaplama robotu, 6502 sayılı Kanun ve Tüketici Hakem Heyetleri Bilirkişilik Yönetmeliği çerçevesinde Ticaret Bakanlığınca yayımlanan tarifedeki gösterge değerlerini esas alır. Brüt tutar, seçilen kategori için gösterge × memur aylık katsayısıdır.</p>
+            <p>Memur aylık katsayısı dönemsel olarak değişir. Lütfen geçerli katsayıyı resmi kaynaklardan teyit ederek giriniz. Sonuçlar bilgilendirme amaçlıdır; nihai ödemeler ilgili kurum uygulamalarına tabidir.</p>
         </div>
     </div>
 
@@ -244,83 +257,348 @@
     </footer>
 
     <script>
-        // Animasyon efekti için sayı formatı
         function formatPrice(number) {
-            return number.toFixed(2).replace('.', ',') + ' TL';
+            return number.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' TL';
         }
 
         function animateNumber(element, start, end, duration) {
-            if (element._animation) {
-                clearInterval(element._animation);
-            }
-
+            if (element._animation) clearInterval(element._animation);
             let startTime = null;
             element._animation = setInterval(() => {
                 if (!startTime) startTime = Date.now();
                 const progress = (Date.now() - startTime) / duration;
-
                 if (progress >= 1) {
                     clearInterval(element._animation);
                     element._animation = null;
                     element.textContent = formatPrice(end);
                     return;
                 }
-
                 const current = start + (end - start) * progress;
                 element.textContent = formatPrice(current);
             }, 16);
         }
 
-        // Ürün kategorileri ve ücret verileri
-        const urunler = {
-            "Ağ Güvenlik Cihazları": [800, 936.17, 8.87, 140.43, 786.87],
-            "Ağırlık Çalışma Makineleri": [1150, 1345.74, 12.76, 201.86, 1131.12],
-            "Ahşap Ve Metal Mobilyalar": [2100, 2457.44, 23.30, 368.62, 2065.53],
-            "Akıllı Ev Ve Otomasyon Sistemleri": [1550, 1813.83, 17.20, 272.07, 1524.56],
-            "Akıllı Kalemler": [800, 936.17, 8.87, 140.43, 786.87],
-            "Akıllı Saatler Ve Bileklikler": [1150, 1345.74, 12.76, 201.86, 1131.12],
-            "Akıllı Tv Kutuları": [800, 936.17, 8.87, 140.43, 786.87],
-            "Akümülatörler": [1150, 1345.74, 12.76, 201.86, 1131.12],
-            "Alarm Cihazları": [1150, 1345.74, 12.76, 201.86, 1131.12],
-            "Amortisörler": [1150, 1345.74, 12.76, 201.86, 1131.12],
-            "Anakartlar": [800, 936.17, 8.87, 140.43, 786.87],
-            "Ani Su Isıtıcıları": [800, 936.17, 8.87, 140.43, 786.87],
-            "Araç Buzdolapları": [1150, 1345.74, 12.76, 201.86, 1131.12],
-            "Araç İçi Kameralar": [1150, 1345.74, 12.76, 201.86, 1131.12],
-            "Araç İçi Konuşma Kitleri": [1150, 1345.74, 12.76, 201.86, 1131.12],
-            "Araç Lastikleri": [1150, 1345.74, 12.76, 201.86, 1131.12],
-            "Aspiratörler": [1150, 1345.74, 12.76, 201.86, 1131.12],
-            "Ateş Ölçen Cihazlar": [1150, 1345.74, 12.76, 201.86, 1131.12],
-            "Atv Araçları": [2100, 2457.44, 23.30, 368.62, 2065.53],
-            "Av Tüfekleri": [1950, 2281.91, 21.63, 342.29, 1917.99],
-            "Avuç Taşlama Makineleri": [800, 936.17, 8.87, 140.43, 786.87],
-            "Bağlamalar": [1950, 2281.91, 21.63, 342.29, 1917.99],
-            "Bataryalar (Sıhhi Tesisat)": [800, 936.17, 8.87, 140.43, 786.87],
-            "Bebek İzleme Kameraları": [1150, 1345.74, 12.76, 201.86, 1131.12],
-            "Bellekler": [800, 936.17, 8.87, 140.43, 786.87],
-            "Bilgisayarlar": [2100, 2457.44, 23.30, 368.62, 2065.53],
-            "Binek Otomobiller": [2500, 2925.53, 27.73, 438.83, 2458.96],
-            "Bisikletler": [1150, 1345.74, 12.76, 201.86, 1131.12],
-            "Bulaşık Makineleri": [2100, 2457.44, 23.30, 368.62, 2065.53],
-            "Buzdolapları": [2100, 2457.44, 23.30, 368.62, 2065.53],
-            "Cep Telefonları": [1550, 1813.83, 17.20, 272.07, 1524.56],
-            "Çamaşır Makineleri": [2100, 2457.44, 23.30, 368.62, 2065.53],
-            "Fırınlar": [2100, 2457.44, 23.30, 368.62, 2065.53],
-            "Klimalar": [1550, 1813.83, 17.20, 272.07, 1524.56],
-            "Kombiler": [1550, 1813.83, 17.20, 272.07, 1524.56],
-            "Motosikletler": [2100, 2457.44, 23.30, 368.62, 2065.53],
-            "Tabletler": [1550, 1813.83, 17.20, 272.07, 1524.56],
-            "Taşınmazlar": [2500, 2925.53, 27.73, 438.83, 2458.96],
-            "Televizyonlar": [2100, 2457.44, 23.30, 368.62, 2065.53],
-            "Turizm ve Hizmetler": [1950, 2281.91, 21.63, 342.29, 1917.99]
+        // Gösterge değerleri (kategori: gösterge)
+        const urunlerData = {
+            // 1. HİZMETLER
+            "Hizmetler (Turizm, Abonelik, Finans, Sigortacılık, Ulaşım, Sağlık, Eğitim dahil tüm hizmetler)": 1950,
+
+            // 2. SAĞLIK ÜRÜNLERİ
+            "Tansiyon aletleri": 1150,
+            "Kan değeri ölçen cihazlar": 1150,
+            "İşitme cihazları": 1150,
+            "Konuşma cihazları": 1150,
+            "Ateş ölçen cihazlar": 1150,
+            "Masaj aletleri ve cihazları": 1150,
+            "Elektronik göğüs pompaları": 1150,
+            "Biberon ısıtıcıları": 1150,
+            "Biberon sterilizatörleri": 1150,
+            "Mama hazırlama setleri": 1150,
+            "Çocuk oto koltukları": 1550,
+            "Mama sandalyeleri": 1150,
+            "Çocuk arabaları ve pusetler": 1550,
+            "Bebek izleme kameraları ve ebeveyn monitörleri": 1150,
+            "Tekerlekli sandalyeler": 1550,
+            "Engelliler için akülü araçlar": 1950,
+            "Görme engelliler için kitap okuyucular": 1150,
+
+            // 3. GÖZLÜKLER
+            "Güneş gözlükleri": 1150,
+            "Gözlük çerçeveleri ve camları": 1150,
+
+            // 4. ISITMA VE HAVALANDIRMA CİHAZLARI
+            "Klimalar": 1550,
+            "Isı pompaları": 1550,
+            "Fan koiller": 1550,
+            "Brülörler": 1550,
+            "Kalorifer kazanları": 1550,
+            "Kat kaloriferleri": 1550,
+            "Kombiler": 1550,
+            "Doğalgaz/LPG sobaları": 1550,
+            "Gazyağlı sobalar": 1550,
+            "Katı yakıt sobaları": 1550,
+            "Elektrikli oda ısıtıcıları": 1150,
+            "Şofbenler": 1150,
+            "Ani su ısıtıcıları": 800,
+            "Termosifonlar": 1550,
+            "Pencere tipi fanlar": 800,
+            "Vantilatörler": 800,
+            "USB fanlar": 800,
+            "Davlumbazlar": 1150,
+            "Aspiratörler": 1150,
+            "Fanlı elbise kurutucuları": 1150,
+            "Hava temizleyiciler ve nemlendiriciler": 1150,
+
+            // 5. SIHHİ TESİSAT ÜRÜNLERİ
+            "Hidroforlar": 1550,
+            "Su arıtma cihazları": 1150,
+            "Motorlu su pompaları": 1550,
+            "Vanalar": 800,
+            "Bataryalar (sıhhi tesisat)": 800,
+            "Musluklar": 800,
+            "Rezervuarlar": 800,
+            "Küvet ve duş tekneleri": 800,
+            "Hidromasaj sistemleri ve jakuziler": 1550,
+            "Duşakabinler": 800,
+            "Elektrikli saunalar": 1550,
+            "Lavabolar": 800,
+            "Klozetler": 800,
+            "Eviyeler": 800,
+
+            // 6. TAŞINABİLİR ELEKTRİKLİ EL ALETLERİ
+            "Testere makineleri": 800,
+            "Polisaj makineleri": 800,
+            "Matkaplar": 800,
+            "Lehim tabancaları": 800,
+            "Vidalama makineleri": 800,
+            "Zımpara makineleri": 800,
+            "Avuç taşlama makineleri": 800,
+
+            // 7. MOTORLAR
+            "Elektrik motorları": 1550,
+            "İçten yanmalı motorlar": 1950,
+            "Dıştan takmalı deniz motorları": 1550,
+
+            // 8. ALTERNATİF ENERJİ SİSTEMLERİ
+            "Güneş enerjisi ile ısıtma sistemleri": 1550,
+            "Güneş enerjisini elektriğe çeviren sistemler": 1950,
+            "Rüzgâr enerjisini elektriğe çeviren sistemler": 1950,
+
+            // 9. ELEKTRONİK VE TELEKOMÜNİKASYON
+            "Sabit hatlı telefonlar": 800,
+            "Cep telefonları": 1550,
+            "Uydu telefonları": 1150,
+            "Modemler/Routerlar": 1150,
+            "Fakslar": 1150,
+            "Araç içi konuşma kitleri": 1150,
+
+            "Bilgisayarlar": 2100,
+            "Tabletler": 1550,
+            "Mouse'lar": 800,
+            "Monitörler": 800,
+            "Yazıcılar": 800,
+            "Tarayıcılar": 800,
+            "Ses kayıt cihazları": 800,
+            "Klavye": 800,
+            "Harici disk üniteleri": 800,
+            "Bilgisayar kameraları": 800,
+            "Oyun konsolları": 1550,
+            "İşlemciler": 1150,
+            "Kart okuyucular": 800,
+            "Ağ güvenlik cihazları": 800,
+            "Hard diskler": 800,
+            "Anakartlar": 800,
+            "Kitap okuyucular": 800,
+            "Dijital fotoğraf çerçeveleri": 800,
+            "Sanal gerçeklik gözlükleri": 1550,
+            "Bellekler": 800,
+            "Ekran kartları": 800,
+            "Laptop soğutucuları": 800,
+            "Akıllı kalemler": 800,
+
+            "Güvenlik amaçlı kameralar": 1150,
+            "Güvenlik amaçlı monitörler": 1150,
+            "Güvenlik amaçlı kayıt cihazları": 1150,
+            "Araç içi kameralar": 1150,
+            "Alarm cihazları": 1150,
+            "Ev içi dinleme ve izleme cihazları": 1150,
+            "Akıllı ev ve otomasyon sistemleri": 1550,
+            "Sesli ve görüntülü konuşma sistemleri": 1550,
+
+            "Televizyonlar": 2100,
+            "Pikap/Plak çalarlar": 800,
+            "Müzik setleri": 800,
+            "Radyolar": 800,
+            "Ses kaydedici/oynatıcı cihazlar (CD, DVD, VCD vb.)": 800,
+            "Medya oynatıcılar (MP3, MP4 vb.)": 800,
+            "Ev sinema sistemleri": 1150,
+            "Ses düzenleyiciler": 1150,
+            "Hoparlörler": 800,
+            "Kulaklıklar": 800,
+            "Elektronik sözlükler": 800,
+            "Projeksiyon cihazları": 1150,
+            "Hesap makineleri": 800,
+            "Elektronik para kasaları": 800,
+            "Uydu alıcıları": 800,
+            "Akıllı TV kutuları": 800,
+            "Uydu yardımı ile konum belirleme cihazları": 800,
+
+            "Kameralar": 1550,
+            "Fotoğraf makineleri": 1150,
+
+            "Dronelar": 1950,
+
+            // 10. ELEKTRİK ÜRETEN/DÜZENLEYEN CİHAZLAR
+            "Jeneratörler": 1950,
+            "Akümülatörler": 1150,
+            "Kesintisiz güç kaynakları": 800,
+            "Dönüştürücüler (invertör)": 800,
+            "Regülatörler": 1150,
+
+            // 11. TAŞITLAR
+            "Binek otomobiller": 2500,
+            "Kamyonetler": 2500,
+            "Motosikletler": 2100,
+            "ATV araçları": 2100,
+            "Motorlu bisikletler": 1950,
+            "Motorlu scooterlar": 1950,
+            "Deniz motosikletleri": 2100,
+            "Yatlar": 2500,
+            "Kar motosikletleri": 2100,
+            "Bisikletler": 1150,
+            "Elektrikli kaykaylar": 1950,
+            "Çocuklar için akülü araçlar": 1950,
+            "Karavanlar": 2500,
+            "Araç lastikleri": 1150,
+            "Farlar": 1150,
+            "Gösterge tablosu ve göstergeler": 1150,
+            "Merkezi kilitler": 1150,
+            "Emniyet kemeri ve bağlantıları": 1150,
+            "Emniyet camları": 1150,
+            "Egzoz boru ve susturucular": 1150,
+            "Şarj dinamoları": 1150,
+            "Jantlar": 1150,
+            "Katalitik konvertörler": 1150,
+            "Amortisörler": 1150,
+            "Radyatörler": 1150,
+            "Oto klimaları": 1150,
+            "LPG dönüşüm kitleri": 1550,
+            "CNG dönüşüm kitleri": 1550,
+            "Elektrik dönüşüm kitleri": 1150,
+
+            // 12. EV TİPİ DİKİŞ MAKİNELERİ
+            "Ev tipi dikiş makineleri": 1150,
+
+            // 13. BAHÇE MAKİNELERİ
+            "Çim/ot/çit kesme makineleri": 1150,
+            "Çim biçme makineleri": 1150,
+            "Zincirli testere makineleri": 1150,
+            "Çapalama makineleri": 1550,
+
+            // 14. ÖLÇME ALET/CİHAZLARI
+            "Elektrik sayaçları": 1150,
+            "Doğalgaz sayaçları": 1150,
+            "Su sayaçları": 1150,
+            "Isı sayaçları / Isı ölçerler": 1150,
+            "Saatler": 1150,
+            "Akıllı saatler ve bileklikler": 1150,
+            "Dalış saatleri/bilgisayarları": 1150,
+            "Oda termostatları": 1150,
+
+            // 15. SPOR VE AV
+            "Kondisyon bisikletleri": 1150,
+            "Koşu bantları": 1150,
+            "Kondisyon küreği": 1150,
+            "Ağırlık çalışma makineleri": 1150,
+            "Av tüfekleri": 1950,
+
+            // 16. EV CİHAZLARI
+            "Buzdolapları": 2100,
+            "Derin dondurucular": 2100,
+            "Araç buzdolapları": 1150,
+            "Su sebilleri": 1150,
+            "Bulaşık makineleri": 2100,
+            "Çamaşır makineleri": 2100,
+            "Çamaşır kurutma makineleri": 2100,
+            "Elektrikli süpürgeler": 1150,
+            "Fırınlar": 2100,
+            "Ocaklar": 1150,
+            "Pişirme saçları": 800,
+            "Mikrodalga fırınlar": 1150,
+            "Buharlı temizlik makineleri": 1150,
+            "Buz yapma makineleri": 1150,
+            "Çöp öğütme makineleri": 1150,
+            "Kağıt öğütme ve evrak imha makineleri": 1150,
+            "Düdüklü tencereler": 1150,
+            "Ütüler": 1150,
+
+            "Saç kesme makineleri": 800,
+            "Saç şekillendirme cihazları": 800,
+            "Saç kurutma makineleri": 800,
+            "Elektrikli tıraş makineleri": 800,
+            "Epilasyon cihazları": 1150,
+            "Sakal bıyık kesme/düzeltme makineleri": 800,
+            "Yüz maskesi makineleri": 800,
+            "Cilt temizleme cihazları": 800,
+
+            "Ekmek kızartma makineleri": 800,
+            "Ekmek kesme makineleri": 800,
+            "Ekmek yapma makineleri": 800,
+            "Tost makineleri": 800,
+            "Yoğurt yapma makineleri": 800,
+            "Yumurta pişiriciler": 800,
+            "Karıştırıcılar": 800,
+            "Çay/Kahve makineleri": 800,
+            "Meyve/sebze sıkacakları": 800,
+            "Et kıyma makineleri": 800,
+            "Mısır patlatma makineleri": 800,
+            "Su ısıtıcılar (kettle)": 800,
+            "Elektrikli pişiriciler": 800,
+            "Buharlı pişiriciler": 800,
+            "Mutfak robotları": 800,
+            "Fritözler": 800,
+            "Izgaralar": 800,
+            "Blenderlar": 800,
+            "Doğrayıcılar": 800,
+            "Gıda öğütücüler": 800,
+            "Kahve öğütücüler": 800,
+            "Elektrikli cezveler": 800,
+            "Dondurma yapma makineleri": 800,
+            "Waffle makineleri": 800,
+
+            // 17. MÜZİK ALETLERİ
+            "Orglar": 1950,
+            "Piyanolar": 1950,
+            "Bağlamalar": 1950,
+            "Bateriler": 1950,
+            "Gitarlar": 1950,
+            "Kemanlar": 1950,
+
+            // 18. MOBİLYA
+            "Ahşap ve metal mobilyalar": 2100,
+
+            // 19. KAPI ve PENCERE
+            "Kapı ve pencereler": 1550,
+            "Kapı hidrolikleri": 1150,
+            "Kapı kilitleri": 1150,
+            "Kapı otomatları": 1150,
+            "Cam balkonlar": 1550,
+            "Elektrikli panjurlar": 1550,
+
+            // 20-28 GENEL KATEGORİLER
+            "Ev tekstili, ev eşyaları ve ev dekorasyonu ürünleri": 800,
+            "Kişisel aksesuarlar ve ayakkabı, çanta dahil tüm giyim ürünleri": 800,
+            "Oyuncaklar": 800,
+            "Kırtasiye ürünleri": 800,
+            "Kozmetik ve kişisel bakım ürünleri": 800,
+            "Temizlik ürünleri": 800,
+            "Gıda ve gıda takviyesi ürünleri": 800,
+            "Taşınmazlar": 2500,
+            "Diğer mallar": 800
         };
 
-        // Sayfa yüklendiğinde ürün kategorilerini select'e ekle
+        function saveKatsayi(value) { try { localStorage.setItem('memurKatsayi', value); } catch (e) {} }
+        function loadKatsayi() { try { return localStorage.getItem('memurKatsayi') || ''; } catch (e) { return ''; } }
+        function parseKatsayi(v) {
+            if (!v) return NaN;
+            const val = String(v).trim().replace(',', '.');
+            return Number(val);
+        }
+
+        function onKatsayiChange() {
+            const input = document.getElementById('memurKatsayi');
+            saveKatsayi(input.value);
+            hesapla();
+        }
+
         window.onload = function() {
             const select = document.getElementById('urunKategori');
             const categoryCount = document.getElementById('categoryCount');
-            const sortedUrunler = Object.keys(urunler).sort();
-            
+            const katsayiInput = document.getElementById('memurKatsayi');
+            const sortedUrunler = Object.keys(urunlerData).sort((a,b)=>a.localeCompare(b,'tr'));
+
+            katsayiInput.value = loadKatsayi();
+
             sortedUrunler.forEach(urun => {
                 const option = document.createElement('option');
                 option.value = urun;
@@ -329,9 +607,10 @@
             });
 
             categoryCount.textContent = `${sortedUrunler.length} kategori`;
+            // Arkaplanda katsayıyı otomatik getirmeyi dene (sessiz).
+            autoFetchKatsayi(true);
         };
 
-        // Kategori filtreleme fonksiyonu
         function filterCategories() {
             const input = document.getElementById('searchInput');
             const filter = input.value.toLowerCase();
@@ -341,7 +620,7 @@
 
             select.innerHTML = '<option value="">Seçiniz...</option>';
 
-            Object.keys(urunler).sort().forEach(urun => {
+            Object.keys(urunlerData).sort((a,b)=>a.localeCompare(b,'tr')).forEach(urun => {
                 if (urun.toLowerCase().includes(filter)) {
                     const option = document.createElement('option');
                     option.value = urun;
@@ -360,19 +639,31 @@
             }
         }
 
-        // Hesaplama fonksiyonu
         function hesapla() {
             const select = document.getElementById('urunKategori');
             const sonuc = document.getElementById('sonuc');
-            
-            if (select.value === "") {
+            const katsayi = parseKatsayi(document.getElementById('memurKatsayi').value);
+
+            if (!select.value || !(katsayi > 0)) {
                 sonuc.style.display = 'none';
                 return;
             }
 
-            sonuc.style.display = 'block';
+            const gosterge = urunlerData[select.value];
+            const KDV_ORAN = 0.20;
+            const STOPAJ_ORAN = 0.20;
+            const DAMGA_ORAN = 0.00948; // binde 9,48
 
-            const ucretler = urunler[select.value];
+            // Brüt = gösterge × katsayı; üst sınır: 3000 × katsayı
+            const brutHesap = gosterge * katsayi;
+            const brutUcret = Math.min(brutHesap, 3000 * katsayi);
+
+            const kdvTutar = brutUcret * KDV_ORAN;
+            const stopajTutar = brutUcret * STOPAJ_ORAN;
+            const damgaTutar = brutUcret * DAMGA_ORAN;
+            const kdvDahilToplam = brutUcret + kdvTutar;
+            const netOdenecek = brutUcret + kdvTutar - stopajTutar - damgaTutar;
+
             const elements = {
                 bilirkisiUcreti: document.getElementById('bilirkisiUcreti'),
                 kdvDahil: document.getElementById('kdvDahil'),
@@ -386,42 +677,78 @@
                 acc[key] = parseFloat(text) || 0;
                 return acc;
             }, {});
-            // Tüm mevcut animasyonları temizle
-            Object.values(elements).forEach(element => {
-                if (element._animation) {
-                    clearInterval(element._animation);
-                    element._animation = null;
-                }
-            });
 
-            // Yeni değerleri animasyonlu şekilde güncelle
-            const duration = 500;
             const values = [
-                ucretler[0], // Bilirkişi ücreti
-                ucretler[1], // KDV dahil
-                ucretler[2], // Stopaj
-                ucretler[3], // Damga vergisi
-                ucretler[4]  // Net tutar
+                brutUcret,
+                kdvDahilToplam,
+                stopajTutar,
+                damgaTutar,
+                netOdenecek
             ];
 
             Object.keys(elements).forEach((key, index) => {
                 const element = elements[key];
                 const startValue = currentValues[key];
                 const endValue = values[index];
-                animateNumber(element, startValue, endValue, duration);
-            });
-
-            // Seçilen kategoriyi vurgula
-            const rows = document.querySelectorAll('.result table tr');
-            rows.forEach(row => {
-                const cells = row.getElementsByTagName('td');
-                if (cells.length > 0) {
-                    cells[0].classList.remove('highlight');
-                }
+                animateNumber(element, startValue, endValue, 500);
             });
 
             sonuc.style.display = 'block';
         }
+
+        // ---- Otomatik Katsayı Getirme (pdf.js ile) ----
+        async function autoFetchKatsayi(silent = false) {
+            // Denenecek muhtemel resmi kaynak PDF adresleri (sıralı)
+            const candidateUrls = [
+                // Verdiğiniz bağlantı (Mahalli İdare Sözleşmeli Personel genelgesi)
+                'https://ms.hmb.gov.tr/uploads/2025/07/2025-Yili-Temmuz-Ayi-Mahalli-Idare-Sozlesmeli-Personeli-Ucretleri-Hakkinda-Genelge-2d14e09491dd7ae4.pdf',
+                // Muhtemel Mali ve Sosyal Haklar genelgeleri (Ocak/Temmuz)
+                'https://ms.hmb.gov.tr/uploads/2025/07/2025-Yili-Temmuz-Ayi-Mali-ve-Sosyal-Haklar-Genelgesi.pdf',
+                'https://ms.hmb.gov.tr/uploads/2025/01/2025-Yili-Ocak-Ayi-Mali-ve-Sosyal-Haklar-Genelgesi.pdf'
+            ];
+
+            try {
+                if (!window['pdfjsLib']) throw new Error('pdf.js yüklü değil');
+                pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+                let foundValue = null;
+                for (const url of candidateUrls) {
+                    try {
+                        const loadingTask = pdfjsLib.getDocument({ url, withCredentials:false });
+                        const pdf = await loadingTask.promise;
+                        let fullText = '';
+                        const maxPages = Math.min(pdf.numPages, 10);
+                        for (let i=1; i<=maxPages; i++) {
+                            const page = await pdf.getPage(i);
+                            const textContent = await page.getTextContent();
+                            const pageText = textContent.items.map(it => it.str).join(' ');
+                            fullText += '\n' + pageText;
+                        }
+                        const patterns = [
+                            /Memur\s*Ayl[ıi]k\s*Katsay[ıi]\s*[:\-]?\s*([0-9]+[\.,][0-9]+)/i,
+                            /Ayl[ıi]k\s*Katsay[ıi]\s*[:\-]?\s*([0-9]+[\.,][0-9]+)/i,
+                            /Memur\s*Katsay[ıi]\s*[:\-]?\s*([0-9]+[\.,][0-9]+)/i
+                        ];
+                        for (const re of patterns) {
+                            const m = fullText.match(re);
+                            if (m && m[1]) { foundValue = m[1]; break; }
+                        }
+                        if (foundValue) break; // bir url’de bulduk, dur
+                    } catch (_) {
+                        // sıradaki adayı dene
+                    }
+                }
+
+                if (!foundValue) return; // sessiz başarısızlık, kullanıcıyı rahatsız etmeyelim
+
+                const katsayiInput = document.getElementById('memurKatsayi');
+                katsayiInput.value = String(foundValue).replace(/\s/g,'');
+                onKatsayiChange();
+            } catch (_) {
+                // tamamen sessiz kal
+            }
+        }
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 </body>
 </html>
