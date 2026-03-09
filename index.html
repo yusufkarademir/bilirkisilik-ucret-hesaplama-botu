@@ -6,85 +6,171 @@
     <title>Tüketici Hakem Heyetleri Bilirkişi Ücret Hesaplama Robotu</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        :root {
+            --primary: #2c3e50;
+            --accent: #3498db;
+            --background-start: #f5f7fa;
+            --background-end: #c3cfe2;
+            --card-bg: #ffffff;
+            --muted: #7f8c8d;
+        }
+
         body {
             font-family: 'Segoe UI', sans-serif;
-            max-width: 900px;
+            max-width: 960px;
             margin: 0 auto;
             padding: 20px;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: linear-gradient(135deg, var(--background-start) 0%, var(--background-end) 100%);
             min-height: 100vh;
+            color: var(--primary);
         }
+
         .container {
-            background-color: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            animation: fadeIn 0.5s ease-in;
+            background-color: var(--card-bg);
+            padding: 32px;
+            border-radius: 18px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+            animation: fadeIn 0.6s ease-in;
+        }
+
         h1 {
-            color: #2c3e50;
+            color: var(--primary);
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 28px;
             font-size: 1.8em;
             line-height: 1.4;
-            padding: 15px;
+            padding: 16px;
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
         }
-        .disclaimer {
-            margin-top: 30px;
-            padding: 20px;
-            background-color: #f8f9fa;
-            border-left: 4px solid #3498db;
-            border-radius: 4px;
-            font-size: 0.9em;
-            color: #505050;
-            line-height: 1.6;
+
+        .info-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            background-color: var(--accent);
+            color: #fff;
+            border-radius: 16px;
+            font-size: 0.8em;
+            margin-left: 8px;
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+
+        .katsayi-panel {
+            border: 1px solid #e0e6ed;
+            border-radius: 12px;
+            padding: 18px;
+            background: #f8fbff;
+            margin-bottom: 24px;
         }
-        .form-group {
-            margin-bottom: 25px;
-            position: relative;
-        }
-        label {
-            display: block;
+
+        .katsayi-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
             margin-bottom: 8px;
-            color: #2c3e50;
-            font-weight: 500;
+            flex-wrap: wrap;
         }
+
+        .katsayi-label {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .katsayi-value {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .katsayi-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 0.9em;
+            color: var(--muted);
+        }
+
+        .katsayi-meta a {
+            color: var(--accent);
+        }
+
         .search-container {
             position: relative;
             margin-bottom: 20px;
         }
+
+        .tarife-status {
+            margin: -10px 0 18px;
+            padding: 12px 14px;
+            border-radius: 10px;
+            background: rgba(52, 152, 219, 0.12);
+            color: var(--primary);
+            font-size: 0.95em;
+            display: none;
+            line-height: 1.5;
+        }
+
+        .tarife-status.error {
+            background: rgba(231, 76, 60, 0.12);
+            color: #c0392b;
+        }
+
+
+        .helper-text {
+            margin-top: 10px;
+            font-size: 0.85em;
+            color: var(--muted);
+            line-height: 1.4;
+        }
+
+        .helper-text a {
+            color: var(--accent);
+        }
+
         .search-container i {
             position: absolute;
-            left: 12px;
+            left: 14px;
             top: 50%;
             transform: translateY(-50%);
-            color: #7f8c8d;
+            color: var(--muted);
         }
+
         #searchInput {
             width: 100%;
-            padding: 12px 40px;
+            padding: 12px 44px;
             border: 2px solid #e0e0e0;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 16px;
             transition: all 0.3s ease;
             box-sizing: border-box;
         }
+
         #searchInput:focus {
-            border-color: #3498db;
+            border-color: var(--accent);
             outline: none;
             box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
         }
+
+        .form-group {
+            margin-bottom: 22px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
         select {
             width: 100%;
             padding: 12px;
             border: 2px solid #e0e0e0;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 16px;
             appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%237f8c8d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
@@ -93,106 +179,164 @@
             background-size: 16px;
             transition: all 0.3s ease;
         }
+
         select:focus {
-            border-color: #3498db;
+            border-color: var(--accent);
             outline: none;
             box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
         }
+
         select:hover {
             border-color: #bdc3c7;
         }
-        .result {
-            margin-top: 30px;
-            padding: 25px;
-            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-            border-radius: 12px;
+
+        .category-count {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+            font-size: 0.9em;
+        }
+
+        #noResults {
             display: none;
-            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            padding: 18px;
+            text-align: center;
+            color: #e74c3c;
+            background-color: #fdf3f2;
+            border-radius: 10px;
+            margin: 14px 0;
+        }
+
+
+        .result {
+            margin-top: 28px;
+            padding: 26px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 14px;
+            display: none;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
             animation: slideIn 0.5s ease-out;
         }
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
+
+        .result h3 {
+            margin-top: 0;
+            margin-bottom: 18px;
+            font-size: 1.2em;
         }
+
         .result table {
             width: 100%;
             border-collapse: separate;
             border-spacing: 0;
-            margin-top: 15px;
-            border-radius: 8px;
+            border-radius: 10px;
             overflow: hidden;
             box-shadow: 0 0 0 1px #e0e0e0;
         }
-        .result table th, .result table td {
-            padding: 15px;
-            border: none;
-            text-align: left;
+
+        .result table th,
+        .result table td {
+            padding: 16px;
             border-bottom: 1px solid #e0e0e0;
-            transition: background-color 0.3s ease;
+            text-align: left;
         }
+
         .result table tr:last-child td {
             border-bottom: none;
         }
+
         .result table th {
-            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-            color: white;
+            background: linear-gradient(135deg, var(--accent) 0%, #2980b9 100%);
+            color: #fff;
+            font-weight: 600;
+            width: 45%;
+        }
+
+        .result table td {
+            background-color: #fff;
             font-weight: 500;
         }
+
         .result table tr:hover td {
             background-color: #f5f9ff;
         }
-        .highlight {
-            background-color: #fff3cd;
-            padding: 2px 0;
-            border-radius: 3px;
+
+        .disclaimer {
+            margin-top: 30px;
+            padding: 22px;
+            background-color: #f8f9fa;
+            border-left: 4px solid var(--accent);
+            border-radius: 8px;
+            font-size: 0.95em;
+            color: #505050;
+            line-height: 1.6;
         }
+
         footer {
-            margin-top: 40px;
+            margin-top: 36px;
             text-align: center;
-            color: #7f8c8d;
+            color: var(--muted);
             font-size: 0.9em;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 8px;
+            padding: 18px;
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 10px;
         }
-        .info-badge {
-            display: inline-block;
-            padding: 3px 8px;
-            background-color: #3498db;
-            color: white;
-            border-radius: 12px;
-            font-size: 0.8em;
-            margin-left: 8px;
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        .category-count {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #7f8c8d;
-            font-size: 0.9em;
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        #noResults {
-            display: none;
-            padding: 20px;
-            text-align: center;
-            color: #e74c3c;
-            background-color: #fdf3f2;
-            border-radius: 8px;
-            margin: 10px 0;
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.4em;
+            }
+
+            .katsayi-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .katsayi-value {
+                font-size: 1.2em;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Tüketici Hakem Heyetleri<br>Bilirkişilik Ücret Hesaplama Robotu<br>
+        <h1>
+            Tüketici Hakem Heyetleri<br>Bilirkişi Ücret Hesaplama Robotu
             <span class="info-badge">2025 Güncel</span>
         </h1>
-        
+
+        <div class="katsayi-panel">
+            <div class="katsayi-header">
+                <span class="katsayi-label"><i class="fas fa-chart-line"></i> Memur Aylık Katsayısı</span>
+                <span class="katsayi-value" id="katsayiDegeri">-</span>
+            </div>
+            <div class="katsayi-meta">
+                <span id="katsayiDurum">Güncel katsayı yükleniyor...</span>
+                <a id="katsayiKaynak" href="#" target="_blank" rel="noopener" hidden>Kaynağı görüntüle</a>
+            </div>
+        </div>
+
         <div class="search-container">
             <i class="fas fa-search"></i>
             <input type="text" id="searchInput" placeholder="Ürün veya hizmet ara..." onkeyup="filterCategories()">
         </div>
+
+        <div class="tarife-status" id="tarifeDurum" role="status" aria-live="polite"></div>
 
         <div class="form-group">
             <label for="urunKategori">Ürün/Hizmet Kategorisi:</label>
@@ -207,22 +351,30 @@
         </div>
 
         <div class="result" id="sonuc">
-            <h3>Hesaplama Sonucu:</h3>
+            <h3>Hesaplama Sonucu</h3>
             <table>
                 <tr>
-                    <th>Bilirkişi Ücreti</th>
+                    <th>Gösterge</th>
+                    <td id="gostergeDegeri">-</td>
+                </tr>
+                <tr>
+                    <th>Brüt Bilirkişi Ücreti</th>
                     <td id="bilirkisiUcreti">-</td>
+                </tr>
+                <tr>
+                    <th>KDV (%20)</th>
+                    <td id="kdvTutar">-</td>
                 </tr>
                 <tr>
                     <th>KDV Dahil Tutar</th>
                     <td id="kdvDahil">-</td>
                 </tr>
                 <tr>
-                    <th>Stopaj (%0.947)</th>
+                    <th>Stopaj (%20)</th>
                     <td id="stopaj">-</td>
                 </tr>
                 <tr>
-                    <th>Damga Vergisi (%15)</th>
+                    <th>Damga Vergisi (binde 9,48)</th>
                     <td id="damgaVergisi">-</td>
                 </tr>
                 <tr>
@@ -234,8 +386,8 @@
 
         <div class="disclaimer">
             <p><strong>Önemli Bilgilendirme:</strong></p>
-            <p>Bu hesaplama robotu, T.C. Adalet Bakanlığı'nın 2025 yılı için belirlediği Tüketici Hakem Heyetleri bilirkişilik ücret tarifesi referans alınarak hazırlanmıştır. Sunulan veriler bilgilendirme amaçlıdır ve kesin ödeme tutarlarını garanti etmemektedir.</p>
-            <p>Resmi işlemler için lütfen güncel mevzuatı ve ilgili kurumların güncel tarifelerini kontrol ediniz. Hesaplama sonuçları tahmini değerler olup, nihai ücretlendirme ilgili kurumların değerlendirmesine tabidir.</p>
+            <p>Bu hesaplama robotu, 6502 sayılı Kanun ve Tüketici Hakem Heyetleri Bilirkişilik Yönetmeliği kapsamında Ticaret Bakanlığınca yayımlanan bilirkişi ücret tarifesindeki gösterge değerlerini esas alır. Brüt tutar, seçilen kategori için ilgili gösterge ile memur aylık katsayısının çarpılmasıyla hesaplanır.</p>
+            <p>Katsayı bilgisi, Hazine ve Maliye Bakanlığının güncel duyuruları temel alınarak çevrimiçi kaynaklardan otomatik olarak çekilir. İnternet bağlantısı ya da kaynak erişimi sağlanamadığında en son bilinen katsayı ile hesaplama yapılır. Nihai ödeme tutarı, yasal değişiklikler ve ilgili idarenin uygulamalarına göre farklılık gösterebilir.</p>
         </div>
     </div>
 
@@ -243,185 +395,625 @@
         <p>© 2025 THH Bilirkişi Ücret Hesaplama Robotu</p>
     </footer>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.min.js"></script>
     <script>
-        // Animasyon efekti için sayı formatı
-        function formatPrice(number) {
-            return number.toFixed(2).replace('.', ',') + ' TL';
+        const currencyFormatter = new Intl.NumberFormat('tr-TR', {
+            style: 'currency',
+            currency: 'TRY',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+
+        const integerFormatter = new Intl.NumberFormat('tr-TR', {
+            maximumFractionDigits: 0
+        });
+
+        const decimalFormatter = new Intl.NumberFormat('tr-TR', {
+            minimumFractionDigits: 6,
+            maximumFractionDigits: 6
+        });
+
+        const TAX_RATES = {
+            kdv: 0.20,
+            stopaj: 0.20,
+            damga: 0.00948
+        };
+
+        const TARIFE_PDF_SOURCES = [
+            {
+                url: 'https://tuketici.ticaret.gov.tr/data/60085acb13b876b47423864c/THHBilirkisilikUcretTarifesi1.pdf',
+                label: 'Ticaret Bakanlığı (doğrudan erişim)'
+            },
+            {
+                url: 'https://cors.isomorphic-git.org/https://tuketici.ticaret.gov.tr/data/60085acb13b876b47423864c/THHBilirkisilikUcretTarifesi1.pdf',
+                label: 'isomorphic-git proxy'
+            },
+            {
+                url: 'https://r.jina.ai/https://tuketici.ticaret.gov.tr/data/60085acb13b876b47423864c/THHBilirkisilikUcretTarifesi1.pdf',
+                label: 'r.jina.ai yansısı'
+            }
+        ];
+
+        const FALLBACK_KATSAYI = {
+            value: 0.985187,
+            description: 'Yedek katsayı (2025 Temmuz dönemi Hazine ve Maliye Bakanlığı duyurusu)',
+            source: 'https://www.hmb.gov.tr/maas-katsayilari',
+            retrievedAt: null
+        };
+
+        const FALLBACK_URUNLER = {
+            "Ağ Güvenlik Cihazları": { gosterge: 800 },
+            "Ağırlık Çalışma Makineleri": { gosterge: 1150 },
+            "Ahşap ve Metal Mobilyalar": { gosterge: 2100 },
+            "Akıllı Ev ve Otomasyon Sistemleri": { gosterge: 1550 },
+            "Akıllı Kalemler": { gosterge: 800 },
+            "Akıllı Saatler ve Bileklikler": { gosterge: 1150 },
+            "Akıllı TV Kutuları": { gosterge: 800 },
+            "Akümülatörler": { gosterge: 1150 },
+            "Alarm Cihazları": { gosterge: 1150 },
+            "Amortisörler": { gosterge: 1150 },
+            "Anakartlar": { gosterge: 800 },
+            "Ani Su Isıtıcıları": { gosterge: 800 },
+            "Araç Buzdolapları": { gosterge: 1150 },
+            "Araç İçi Kameralar": { gosterge: 1150 },
+            "Araç İçi Konuşma Kitleri": { gosterge: 1150 },
+            "Araç Lastikleri": { gosterge: 1150 },
+            "Aspiratörler": { gosterge: 1150 },
+            "Ateş Ölçer Cihazlar": { gosterge: 1150 },
+            "ATV Araçları": { gosterge: 2100 },
+            "Av Tüfekleri": { gosterge: 1950 },
+            "Avuç Taşlama Makineleri": { gosterge: 800 },
+            "Bağlamalar": { gosterge: 1950 },
+            "Bataryalar (Sıhhi Tesisat)": { gosterge: 800 },
+            "Bebek İzleme Kameraları": { gosterge: 1150 },
+            "Bellekler": { gosterge: 800 },
+            "Bilgisayarlar": { gosterge: 2100 },
+            "Binek Otomobiller": { gosterge: 2500 },
+            "Bisikletler": { gosterge: 1150 },
+            "Bulaşık Makineleri": { gosterge: 2100 },
+            "Buzdolapları": { gosterge: 2100 },
+            "Cep Telefonları": { gosterge: 1550 },
+            "Çamaşır Makineleri": { gosterge: 2100 },
+            "Fırınlar": { gosterge: 2100 },
+            "Klimalar": { gosterge: 1550 },
+            "Kombiler": { gosterge: 1550 },
+            "Motosikletler": { gosterge: 2100 },
+            "Tabletler": { gosterge: 1550 },
+            "Taşınmazlar": { gosterge: 2500 },
+            "Televizyonlar": { gosterge: 2100 },
+            "Turizm ve Hizmetler": { gosterge: 1950 }
+        };
+
+        let urunler = {};
+
+        let aktifKatsayi = { ...FALLBACK_KATSAYI };
+
+        function formatPrice(value) {
+            return currencyFormatter.format(value);
         }
 
-        function animateNumber(element, start, end, duration) {
-            if (element._animation) {
-                clearInterval(element._animation);
+        function formatIndicator(value) {
+            return integerFormatter.format(value);
+        }
+
+        function updateElementValue(element, value, formatter = formatPrice) {
+            element.textContent = formatter(value);
+            element.dataset.value = value;
+        }
+
+        function parseLocaleNumber(value) {
+            if (!value) return null;
+            const normalized = value
+                .toString()
+                .replace(/[^0-9.,]/g, '')
+                .replace(/\.(?=.*\.)/g, '')
+                .replace(',', '.');
+            const number = parseFloat(normalized);
+            return Number.isFinite(number) ? number : null;
+        }
+
+        function normalizeWhitespace(value) {
+            return value ? value.replace(/\s+/g, ' ').trim() : '';
+        }
+
+        function sanitizeCategoryName(value) {
+            const normalized = normalizeWhitespace(value)
+                .replace(/^[*•]+\s*/, '')
+                .replace(/^\d+[.)\-]?\s+/, '')
+                .replace(/\s*[:;]$/, '')
+                .replace(/\s*[–—-]\s*$/, '')
+                .replace(/\s+\.+$/, '');
+            return normalizeWhitespace(normalized);
+        }
+
+        function extractIndicatorValue(segment) {
+            if (!segment) return null;
+
+            const digits = segment.replace(/[^0-9]/g, '');
+            if (digits.length < 3 || digits.length > 5) {
+                return null;
             }
 
-            let startTime = null;
-            element._animation = setInterval(() => {
-                if (!startTime) startTime = Date.now();
-                const progress = (Date.now() - startTime) / duration;
+            const value = parseInt(digits, 10);
 
-                if (progress >= 1) {
-                    clearInterval(element._animation);
-                    element._animation = null;
-                    element.textContent = formatPrice(end);
+            if (!Number.isFinite(value) || value < 100 || value > 10000) {
+                return null;
+            }
+
+            return value;
+        }
+
+        function tarifeDurumunuGuncelle(message, isError = false, details = '') {
+            const statusElement = document.getElementById('tarifeDurum');
+            if (!statusElement) return;
+
+            if (!message) {
+                statusElement.style.display = 'none';
+                statusElement.textContent = '';
+                statusElement.classList.remove('error');
+                statusElement.removeAttribute('title');
+                return;
+            }
+
+            statusElement.textContent = message;
+            statusElement.style.display = 'block';
+            statusElement.classList.toggle('error', Boolean(isError));
+            if (details) {
+                statusElement.title = details;
+            } else {
+                statusElement.removeAttribute('title');
+            }
+        }
+
+        async function fetchTarifeKategoriListesi(source) {
+            const pdfjsLib = window.pdfjsLib || window['pdfjs-dist/build/pdf'];
+
+            if (!pdfjsLib || typeof pdfjsLib.getDocument !== 'function') {
+                throw new Error('pdf.js kütüphanesi yüklenemedi.');
+            }
+
+            if (pdfjsLib.GlobalWorkerOptions) {
+                pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.worker.min.js';
+            }
+
+            const isBuffer = source instanceof ArrayBuffer;
+            const getDocumentParams = {
+                disableRange: true,
+                disableStream: true,
+                disableAutoFetch: true
+            };
+
+            if (isBuffer) {
+                getDocumentParams.data = source;
+            } else if (typeof source === 'string') {
+                getDocumentParams.url = source;
+            } else {
+                throw new Error('Geçersiz tarife kaynağı.');
+            }
+
+            const loadingTask = pdfjsLib.getDocument(getDocumentParams);
+            const pdf = await loadingTask.promise;
+            const lines = [];
+
+            for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
+                const page = await pdf.getPage(pageNumber);
+                const textContent = await page.getTextContent({ normalizeWhitespace: true });
+                const lineMap = new Map();
+
+                textContent.items.forEach((item) => {
+                    const y = Math.round(item.transform[5]);
+                    const x = item.transform[4];
+                    const str = item.str;
+
+                    if (!str || !str.trim()) {
+                        return;
+                    }
+
+                    if (!lineMap.has(y)) {
+                        lineMap.set(y, []);
+                    }
+
+                    lineMap.get(y).push({ x, str });
+                });
+
+                const pageLines = Array.from(lineMap.entries())
+                    .sort((a, b) => b[0] - a[0])
+                    .map(([, items]) =>
+                        items
+                            .sort((a, b) => a.x - b.x)
+                            .map(({ str }) => str)
+                            .join(' ')
+                    );
+
+                lines.push(...pageLines);
+            }
+
+            const categories = new Map();
+            let pendingName = '';
+
+            const skipPatterns = [
+                /^ürün/i,
+                /^hizmet/i,
+                /^kategori/i,
+                /^gösterge/i,
+                /^tüketici/i,
+                /^hakem/i,
+                /^heyeti/i,
+                /^bilirkişi/i,
+                /^ücret/i,
+                /^tarife/i,
+                /^sayfa/i,
+                /^ek\b/i,
+                /^tablo/i,
+                /^açıklama/i,
+                /^not/i,
+                /^yılı/i,
+                /^www/i,
+                /^https?:/i,
+                /^resm[iı]/i,
+                /^yay[ıi]n/i,
+                /^dönem/i,
+                /^20\d{2}$/
+            ];
+
+            lines.forEach((rawLine) => {
+                const line = sanitizeCategoryName(rawLine);
+
+                if (!line) {
                     return;
                 }
 
-                const current = start + (end - start) * progress;
-                element.textContent = formatPrice(current);
-            }, 16);
-        }
+                if (skipPatterns.some((pattern) => pattern.test(line))) {
+                    pendingName = '';
+                    return;
+                }
 
-        // Ürün kategorileri ve ücret verileri
-        const urunler = {
-            "Ağ Güvenlik Cihazları": [800, 936.17, 8.87, 140.43, 786.87],
-            "Ağırlık Çalışma Makineleri": [1150, 1345.74, 12.76, 201.86, 1131.12],
-            "Ahşap Ve Metal Mobilyalar": [2100, 2457.44, 23.30, 368.62, 2065.53],
-            "Akıllı Ev Ve Otomasyon Sistemleri": [1550, 1813.83, 17.20, 272.07, 1524.56],
-            "Akıllı Kalemler": [800, 936.17, 8.87, 140.43, 786.87],
-            "Akıllı Saatler Ve Bileklikler": [1150, 1345.74, 12.76, 201.86, 1131.12],
-            "Akıllı Tv Kutuları": [800, 936.17, 8.87, 140.43, 786.87],
-            "Akümülatörler": [1150, 1345.74, 12.76, 201.86, 1131.12],
-            "Alarm Cihazları": [1150, 1345.74, 12.76, 201.86, 1131.12],
-            "Amortisörler": [1150, 1345.74, 12.76, 201.86, 1131.12],
-            "Anakartlar": [800, 936.17, 8.87, 140.43, 786.87],
-            "Ani Su Isıtıcıları": [800, 936.17, 8.87, 140.43, 786.87],
-            "Araç Buzdolapları": [1150, 1345.74, 12.76, 201.86, 1131.12],
-            "Araç İçi Kameralar": [1150, 1345.74, 12.76, 201.86, 1131.12],
-            "Araç İçi Konuşma Kitleri": [1150, 1345.74, 12.76, 201.86, 1131.12],
-            "Araç Lastikleri": [1150, 1345.74, 12.76, 201.86, 1131.12],
-            "Aspiratörler": [1150, 1345.74, 12.76, 201.86, 1131.12],
-            "Ateş Ölçen Cihazlar": [1150, 1345.74, 12.76, 201.86, 1131.12],
-            "Atv Araçları": [2100, 2457.44, 23.30, 368.62, 2065.53],
-            "Av Tüfekleri": [1950, 2281.91, 21.63, 342.29, 1917.99],
-            "Avuç Taşlama Makineleri": [800, 936.17, 8.87, 140.43, 786.87],
-            "Bağlamalar": [1950, 2281.91, 21.63, 342.29, 1917.99],
-            "Bataryalar (Sıhhi Tesisat)": [800, 936.17, 8.87, 140.43, 786.87],
-            "Bebek İzleme Kameraları": [1150, 1345.74, 12.76, 201.86, 1131.12],
-            "Bellekler": [800, 936.17, 8.87, 140.43, 786.87],
-            "Bilgisayarlar": [2100, 2457.44, 23.30, 368.62, 2065.53],
-            "Binek Otomobiller": [2500, 2925.53, 27.73, 438.83, 2458.96],
-            "Bisikletler": [1150, 1345.74, 12.76, 201.86, 1131.12],
-            "Bulaşık Makineleri": [2100, 2457.44, 23.30, 368.62, 2065.53],
-            "Buzdolapları": [2100, 2457.44, 23.30, 368.62, 2065.53],
-            "Cep Telefonları": [1550, 1813.83, 17.20, 272.07, 1524.56],
-            "Çamaşır Makineleri": [2100, 2457.44, 23.30, 368.62, 2065.53],
-            "Fırınlar": [2100, 2457.44, 23.30, 368.62, 2065.53],
-            "Klimalar": [1550, 1813.83, 17.20, 272.07, 1524.56],
-            "Kombiler": [1550, 1813.83, 17.20, 272.07, 1524.56],
-            "Motosikletler": [2100, 2457.44, 23.30, 368.62, 2065.53],
-            "Tabletler": [1550, 1813.83, 17.20, 272.07, 1524.56],
-            "Taşınmazlar": [2500, 2925.53, 27.73, 438.83, 2458.96],
-            "Televizyonlar": [2100, 2457.44, 23.30, 368.62, 2065.53],
-            "Turizm ve Hizmetler": [1950, 2281.91, 21.63, 342.29, 1917.99]
-        };
+                const indicatorAtEndMatch = line.match(/(\d[\d.,]*)$/);
 
-        // Sayfa yüklendiğinde ürün kategorilerini select'e ekle
-        window.onload = function() {
-            const select = document.getElementById('urunKategori');
-            const categoryCount = document.getElementById('categoryCount');
-            const sortedUrunler = Object.keys(urunler).sort();
-            
-            sortedUrunler.forEach(urun => {
-                const option = document.createElement('option');
-                option.value = urun;
-                option.textContent = urun;
-                select.appendChild(option);
+                if (indicatorAtEndMatch) {
+                    const indicatorText = indicatorAtEndMatch[1];
+                    const gosterge = extractIndicatorValue(indicatorText);
+
+                    if (gosterge !== null) {
+                        const name = sanitizeCategoryName(line.slice(0, line.length - indicatorText.length));
+
+                        if (name) {
+                            categories.set(name, { gosterge });
+                            pendingName = '';
+                            return;
+                        }
+                    }
+                }
+
+                if (/^[\d.,]+$/.test(line) && pendingName) {
+                    const gosterge = extractIndicatorValue(line);
+
+                    if (gosterge !== null) {
+                        categories.set(sanitizeCategoryName(pendingName), { gosterge });
+                        pendingName = '';
+                        return;
+                    }
+                }
+
+                pendingName = pendingName ? `${pendingName} ${line}` : line;
             });
 
-            categoryCount.textContent = `${sortedUrunler.length} kategori`;
-        };
+            if (categories.size < 50) {
+                throw new Error('Tarife listesi beklenen şekilde çözümlenemedi.');
+            }
 
-        // Kategori filtreleme fonksiyonu
-        function filterCategories() {
-            const input = document.getElementById('searchInput');
-            const filter = input.value.toLowerCase();
+            return Object.fromEntries(categories.entries());
+        }
+
+        async function loadTarifeVerisi() {
+            const searchInput = document.getElementById('searchInput');
             const select = document.getElementById('urunKategori');
+
+            tarifeDurumunuGuncelle('Tarife listesi yükleniyor...');
+
+            if (searchInput) searchInput.disabled = true;
+            if (select) select.disabled = true;
+
+            let loadedFrom = null;
+            let lastError = null;
+
+            for (const source of TARIFE_PDF_SOURCES) {
+                try {
+                    const kategoriListesi = await fetchTarifeKategoriListesi(source.url);
+                    urunler = kategoriListesi;
+                    loadedFrom = source.label;
+                    break;
+                } catch (error) {
+                    lastError = error;
+                    console.warn('Tarife listesi yüklenemedi:', source.label, error);
+                }
+            }
+
+            if (loadedFrom) {
+                tarifeDurumunuGuncelle(`${Object.keys(urunler).length} kategori ${loadedFrom} üzerinden yüklendi.`);
+            } else {
+                urunler = { ...FALLBACK_URUNLER };
+
+                const fallbackMessage = Object.keys(urunler).length
+                    ? 'Tarifeye ulaşılamadı, sınırlı yedek liste kullanılıyor.'
+                    : 'Tarifeye ulaşılamadı, kategori listesi yüklenemedi.';
+
+                const detail = lastError ? `Son hata: ${lastError.message}` : '';
+                tarifeDurumunuGuncelle(fallbackMessage, true, detail);
+            }
+
+            populateCategories();
+
+            if (searchInput) searchInput.disabled = Object.keys(urunler).length === 0;
+            if (select) select.disabled = Object.keys(urunler).length === 0;
+
+            filterCategories();
+        }
+
+        async function fetchMemurAylikKatsayisi() {
+            const sources = [
+                {
+                    url: 'https://cors.isomorphic-git.org/https://www.hmb.gov.tr/maas-katsayilari',
+                    originalUrl: 'https://www.hmb.gov.tr/maas-katsayilari',
+                    name: 'Hazine ve Maliye Bakanlığı'
+                },
+                {
+                    url: 'https://r.jina.ai/https://www.hmb.gov.tr/maas-katsayilari',
+                    originalUrl: 'https://www.hmb.gov.tr/maas-katsayilari',
+                    name: 'Hazine ve Maliye Bakanlığı (r.jina.ai)'
+                },
+                {
+                    url: 'https://cors.isomorphic-git.org/https://www.memurlar.net/maas-katsayilari/',
+                    originalUrl: 'https://www.memurlar.net/maas-katsayilari/',
+                    name: 'memurlar.net'
+                },
+                {
+                    url: 'https://r.jina.ai/https://www.memurlar.net/maas-katsayilari/',
+                    originalUrl: 'https://www.memurlar.net/maas-katsayilari/',
+                    name: 'memurlar.net (r.jina.ai)'
+                }
+            ];
+
+            for (const source of sources) {
+                try {
+                    const response = await fetch(source.url, { cache: 'no-store' });
+                    if (!response.ok) continue;
+
+                    const text = await response.text();
+                    const matches = Array.from(
+                        text.matchAll(/memur\s+ayl[ıi]k\s+katsay[ıi]s[ıi]\s*(?:[:=]\s*)?([\d.,]+)/gi)
+                    );
+
+                    if (!matches.length) {
+                        const fallbackMatches = [
+                            ...Array.from(text.matchAll(/ayl[ıi]k\s+katsay[ıi]\s*(?:[:=]\s*)?([\d.,]+)/gi)),
+                            ...Array.from(text.matchAll(/katsay[ıi]\s*[:=]\s*([\d.,]+)/gi))
+                        ];
+                        matches.push(...fallbackMatches);
+                    }
+
+                    let katsayi = null;
+                    matches.forEach((match) => {
+                        const value = parseLocaleNumber(match[1]);
+                        if (value && value > 0 && value < 5) {
+                            katsayi = katsayi ? Math.max(katsayi, value) : value;
+                        }
+                    });
+
+                    if (katsayi) {
+                        return {
+                            value: katsayi,
+                            description: source.name,
+                            source: source.originalUrl,
+                            retrievedAt: new Date().toISOString()
+                        };
+                    }
+                } catch (error) {
+                    console.warn('Katsayı kaynağına erişilemedi:', source.name, error);
+                }
+            }
+
+            throw new Error('Katsayı kaynaklarına ulaşılamadı.');
+        }
+
+        function katsayiBilgisiniGuncelle(bilgi, yedekKullanildi) {
+            const katsayiDegeri = document.getElementById('katsayiDegeri');
+            const katsayiDurum = document.getElementById('katsayiDurum');
+            const katsayiKaynak = document.getElementById('katsayiKaynak');
+
+            katsayiDegeri.textContent = decimalFormatter.format(bilgi.value);
+
+            if (bilgi.manual) {
+                const tarih = bilgi.retrievedAt ? new Date(bilgi.retrievedAt).toLocaleString('tr-TR') : '';
+                katsayiDurum.textContent = tarih
+                    ? `Katsayı manuel olarak ${tarih} tarihinde güncellendi.`
+                    : 'Katsayı manuel olarak güncellendi.';
+                if (katsayiKaynak) {
+                    katsayiKaynak.hidden = true;
+                    katsayiKaynak.textContent = '';
+                    katsayiKaynak.removeAttribute('href');
+                }
+                return;
+            }
+
+            if (yedekKullanildi) {
+                katsayiDurum.textContent = 'Güncel katsayıya ulaşılamadı, yedek katsayı kullanılmaktadır.';
+                if (katsayiKaynak) {
+                    if (bilgi.source) {
+                        katsayiKaynak.textContent = bilgi.description;
+                        katsayiKaynak.href = bilgi.source;
+                        katsayiKaynak.hidden = false;
+                    } else {
+                        katsayiKaynak.hidden = true;
+                        katsayiKaynak.textContent = '';
+                        katsayiKaynak.removeAttribute('href');
+                    }
+                }
+            } else {
+                const tarih = bilgi.retrievedAt ? new Date(bilgi.retrievedAt).toLocaleString('tr-TR') : '';
+                katsayiDurum.textContent = tarih ? `${bilgi.description} (${tarih} itibarıyla)` : bilgi.description;
+                if (katsayiKaynak) {
+                    if (bilgi.source) {
+                        katsayiKaynak.textContent = 'Kaynağı görüntüle';
+                        katsayiKaynak.href = bilgi.source;
+                        katsayiKaynak.hidden = false;
+                    } else {
+                        katsayiKaynak.hidden = true;
+                        katsayiKaynak.textContent = '';
+                        katsayiKaynak.removeAttribute('href');
+                    }
+                }
+            }
+        }
+
+        function populateCategories() {
+            const select = document.getElementById('urunKategori');
+            const categoryCount = document.getElementById('categoryCount');
             const noResults = document.getElementById('noResults');
-            let matchCount = 0;
+
+            if (!select || !categoryCount) {
+                return;
+            }
+
+            const sortedCategories = Object.keys(urunler).sort((a, b) => a.localeCompare(b, 'tr'));
 
             select.innerHTML = '<option value="">Seçiniz...</option>';
 
-            Object.keys(urunler).sort().forEach(urun => {
-                if (urun.toLowerCase().includes(filter)) {
-                    const option = document.createElement('option');
-                    option.value = urun;
-                    option.textContent = urun;
-                    select.appendChild(option);
-                    matchCount++;
-                }
+            sortedCategories.forEach((category) => {
+                const option = document.createElement('option');
+                option.value = category;
+                option.textContent = category;
+                select.appendChild(option);
             });
 
-            document.getElementById('categoryCount').textContent = `${matchCount} kategori`;
-            noResults.style.display = matchCount === 0 ? 'block' : 'none';
+            if (sortedCategories.length) {
+                categoryCount.textContent = `${sortedCategories.length} kategori`;
+            } else {
+                categoryCount.textContent = 'Kategori listesi bulunamadı';
+            }
+
+            if (noResults) {
+                noResults.style.display = 'none';
+            }
+        }
+
+        function filterCategories() {
+            const input = document.getElementById('searchInput');
+            const select = document.getElementById('urunKategori');
+            const noResults = document.getElementById('noResults');
+            const categoryCount = document.getElementById('categoryCount');
+
+            if (!select || !input) {
+                return;
+            }
+
+            const filter = input.value.toLowerCase();
+            const categories = Object.keys(urunler);
+
+            select.innerHTML = '<option value="">Seçiniz...</option>';
+
+            if (!categories.length) {
+                if (categoryCount) {
+                    categoryCount.textContent = 'Kategori listesi bulunamadı';
+                }
+
+                if (noResults) {
+                    noResults.style.display = 'block';
+                }
+
+                hesapla();
+                return;
+            }
+
+            let matchCount = 0;
+
+            categories
+                .sort((a, b) => a.localeCompare(b, 'tr'))
+                .forEach((category) => {
+                    if (!filter || category.toLowerCase().includes(filter)) {
+                        const option = document.createElement('option');
+                        option.value = category;
+                        option.textContent = category;
+                        select.appendChild(option);
+                        matchCount++;
+                    }
+                });
+
+            if (categoryCount) {
+                categoryCount.textContent = matchCount ? `${matchCount} kategori` : '0 kategori';
+            }
+
+            if (noResults) {
+                noResults.style.display = matchCount === 0 ? 'block' : 'none';
+            }
 
             if (matchCount === 1) {
                 select.selectedIndex = 1;
                 hesapla();
+            } else if (matchCount === 0) {
+                hesapla();
             }
         }
 
-        // Hesaplama fonksiyonu
         function hesapla() {
             const select = document.getElementById('urunKategori');
             const sonuc = document.getElementById('sonuc');
-            
-            if (select.value === "") {
+
+            if (!select.value) {
                 sonuc.style.display = 'none';
                 return;
             }
 
-            sonuc.style.display = 'block';
+            const kategori = urunler[select.value];
+            if (!kategori) {
+                sonuc.style.display = 'none';
+                return;
+            }
 
-            const ucretler = urunler[select.value];
-            const elements = {
-                bilirkisiUcreti: document.getElementById('bilirkisiUcreti'),
-                kdvDahil: document.getElementById('kdvDahil'),
-                stopaj: document.getElementById('stopaj'),
-                damgaVergisi: document.getElementById('damgaVergisi'),
-                netTutar: document.getElementById('netTutar')
-            };
+            const gosterge = kategori.gosterge;
+            const katsayi = aktifKatsayi.value;
 
-            const currentValues = Object.keys(elements).reduce((acc, key) => {
-                const text = elements[key].textContent.replace(/[^0-9,]/g, '').replace(',', '.');
-                acc[key] = parseFloat(text) || 0;
-                return acc;
-            }, {});
-            // Tüm mevcut animasyonları temizle
-            Object.values(elements).forEach(element => {
-                if (element._animation) {
-                    clearInterval(element._animation);
-                    element._animation = null;
-                }
-            });
+            const brut = gosterge * katsayi;
+            const kdv = brut * TAX_RATES.kdv;
+            const kdvDahil = brut + kdv;
+            const stopaj = brut * TAX_RATES.stopaj;
+            const damga = brut * TAX_RATES.damga;
+            const net = kdvDahil - stopaj - damga;
 
-            // Yeni değerleri animasyonlu şekilde güncelle
-            const duration = 500;
-            const values = [
-                ucretler[0], // Bilirkişi ücreti
-                ucretler[1], // KDV dahil
-                ucretler[2], // Stopaj
-                ucretler[3], // Damga vergisi
-                ucretler[4]  // Net tutar
-            ];
-
-            Object.keys(elements).forEach((key, index) => {
-                const element = elements[key];
-                const startValue = currentValues[key];
-                const endValue = values[index];
-                animateNumber(element, startValue, endValue, duration);
-            });
-
-            // Seçilen kategoriyi vurgula
-            const rows = document.querySelectorAll('.result table tr');
-            rows.forEach(row => {
-                const cells = row.getElementsByTagName('td');
-                if (cells.length > 0) {
-                    cells[0].classList.remove('highlight');
-                }
-            });
+            updateElementValue(document.getElementById('gostergeDegeri'), gosterge, formatIndicator);
+            updateElementValue(document.getElementById('bilirkisiUcreti'), brut);
+            updateElementValue(document.getElementById('kdvTutar'), kdv);
+            updateElementValue(document.getElementById('kdvDahil'), kdvDahil);
+            updateElementValue(document.getElementById('stopaj'), stopaj);
+            updateElementValue(document.getElementById('damgaVergisi'), damga);
+            updateElementValue(document.getElementById('netTutar'), net);
 
             sonuc.style.display = 'block';
         }
+
+        async function initialize() {
+            const searchInput = document.getElementById('searchInput');
+
+            if (searchInput) {
+                searchInput.addEventListener('search', filterCategories);
+            }
+
+            await loadTarifeVerisi();
+
+            try {
+                const katsayiBilgisi = await fetchMemurAylikKatsayisi();
+                aktifKatsayi = katsayiBilgisi;
+                katsayiBilgisiniGuncelle(katsayiBilgisi, false);
+                hesapla();
+            } catch (error) {
+                console.warn(error.message);
+                aktifKatsayi = { ...FALLBACK_KATSAYI };
+                katsayiBilgisiniGuncelle(aktifKatsayi, true);
+                hesapla();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initialize);
     </script>
 </body>
 </html>
