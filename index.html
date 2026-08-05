@@ -5,6 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Tüketici Hakem Heyetleri bilirkişilik ücret tarifesine göre brüt ücret, gelir vergisi stopajı, damga vergisi ve net ödenecek tutar hesaplama aracı.">
     <title>Tüketici Hakem Heyetleri — Bilirkişilik Ücret Hesaplama Robotu</title>
+
+    <!-- Uygulama olarak kurulabilmesi (PWA) için -->
+    <link rel="manifest" href="./manifest.webmanifest">
+    <meta name="theme-color" content="#2980b9">
+    <link rel="icon" type="image/png" sizes="32x32" href="./icons/favicon-32.png">
+    <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Bilirkişi Ücreti">
     <style>
         :root {
             --mavi: #2980b9;
@@ -237,6 +247,33 @@
             padding: 0; margin: -1px; overflow: hidden;
             clip: rect(0,0,0,0); white-space: nowrap; border: 0;
         }
+        /* Uygulama olarak kurma / güncelleme bildirimi */
+        #kurBtn { display: none; margin: 0 auto 20px; }
+        #guncellemeBar {
+            position: fixed;
+            left: 50%;
+            bottom: 16px;
+            transform: translateX(-50%);
+            width: calc(100% - 32px);
+            max-width: 460px;
+            background: var(--lacivert);
+            color: #fff;
+            padding: 12px 16px;
+            border-radius: 10px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+            font-size: 0.92em;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            z-index: 50;
+        }
+        #guncellemeBar.acik { display: flex; }
+        #guncellemeBar button {
+            border-color: #fff; color: #fff; background: transparent;
+            padding: 7px 14px; font-size: 0.95em;
+        }
+        #guncellemeBar button:hover { background: #fff; color: var(--lacivert); }
         @media (max-width: 600px) {
             body { padding: 10px; }
             .container { padding: 18px 15px; }
@@ -250,7 +287,8 @@
         @media print {
             body { background: none; padding: 0; max-width: none; }
             .container { box-shadow: none; padding: 0; animation: none; }
-            .search-container, .form-group, .eylem-satir, footer, details.kaynaklar, #noResults { display: none !important; }
+            .search-container, .form-group, .eylem-satir, footer, details.kaynaklar,
+            #noResults, #kurBtn, #guncellemeBar { display: none !important; }
             .result { display: block !important; box-shadow: none; animation: none; page-break-inside: avoid; }
         }
         @media (prefers-reduced-motion: reduce) {
@@ -267,6 +305,8 @@
             Tarife gösterge esaslıdır; ödenecek tutar, göstergenin yürürlükteki
             <strong>memur aylık katsayısı</strong> ile çarpımından bulunur.
         </p>
+
+        <button type="button" id="kurBtn">Uygulama olarak yükle</button>
 
         <h2>1. Memur aylık katsayısı</h2>
         <div class="form-group">
@@ -437,6 +477,11 @@
     <footer>
         <p>THH Bilirkişi Ücret Hesaplama Robotu — <span id="footerDonem">—</span></p>
     </footer>
+
+    <div id="guncellemeBar" role="status">
+        <span>Yeni bir sürüm hazır.</span>
+        <button type="button" id="guncelleBtn">Yenile</button>
+    </div>
 
     <script>
         'use strict';
@@ -1036,6 +1081,65 @@
                 }
             });
         });
+
+        // ---- Uygulama olarak kurulum ve çevrimdışı destek (PWA) --------------
+        // Service worker yalnızca HTTPS veya localhost üzerinde çalışır;
+        // dosya (file://) olarak açıldığında sessizce atlanır.
+        (function () {
+            if (!('serviceWorker' in navigator)) return;
+
+            window.addEventListener('load', function () {
+                navigator.serviceWorker.register('./sw.js').then(function (kayit) {
+                    // Yeni sürüm indirildiğinde kullanıcıya yenileme çubuğu göster
+                    kayit.addEventListener('updatefound', function () {
+                        const yeni = kayit.installing;
+                        if (!yeni) return;
+                        yeni.addEventListener('statechange', function () {
+                            if (yeni.state === 'installed' && navigator.serviceWorker.controller) {
+                                const bar = document.getElementById('guncellemeBar');
+                                bar.classList.add('acik');
+                                document.getElementById('guncelleBtn').onclick = function () {
+                                    yeni.postMessage('HEMEN_GUNCELLE');
+                                };
+                            }
+                        });
+                    });
+                }).catch(function () { /* kurulum başarısızsa uygulama yine çalışır */ });
+
+                let yenileniyor = false;
+                navigator.serviceWorker.addEventListener('controllerchange', function () {
+                    if (yenileniyor) return;
+                    yenileniyor = true;
+                    window.location.reload();
+                });
+            });
+        })();
+
+        // Android/masaüstü Chrome'da "Uygulama olarak yükle" butonu
+        (function () {
+            let kurulumOlayi = null;
+            const btn = document.getElementById('kurBtn');
+
+            window.addEventListener('beforeinstallprompt', function (e) {
+                e.preventDefault();
+                kurulumOlayi = e;
+                btn.style.display = 'block';
+            });
+
+            btn.addEventListener('click', function () {
+                if (!kurulumOlayi) return;
+                kurulumOlayi.prompt();
+                kurulumOlayi.userChoice.finally(function () {
+                    kurulumOlayi = null;
+                    btn.style.display = 'none';
+                });
+            });
+
+            window.addEventListener('appinstalled', function () {
+                kurulumOlayi = null;
+                btn.style.display = 'none';
+            });
+        })();
     </script>
 </body>
 </html>

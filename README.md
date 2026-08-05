@@ -42,6 +42,49 @@ hâlinde gösterir: *kesinti yapılırsa* ve *istisna uygulanırsa* net tutar.
 - Girdilerin tarayıcıda saklanması (`localStorage`)
 - Sonucu panoya kopyalama, yazdırma / PDF çıktısı
 - Mobil uyumlu, erişilebilir işaretleme, `prefers-reduced-motion` desteği
+- **Kurulabilir uygulama (PWA):** ana ekrana eklenir, kendi ikonuyla tam ekran açılır,
+  internet olmadan da çalışır
+
+## Yayına alma (ücretsiz)
+
+Proje bağımlılığı olmayan statik dosyalardan oluşur; derleme adımı yoktur. Bu nedenle
+herhangi bir statik barındırma hizmetinde ücretsiz yayınlanabilir.
+
+### GitHub Pages (önerilen — repo zaten GitHub'da)
+
+`Settings → Pages → Source: Deploy from a branch → main / (root)` seçilir. Birkaç dakika
+içinde site şu adreste yayına girer:
+
+```
+https://yusufkarademir.github.io/bilirkisilik-ucret-hesaplama-botu/
+```
+
+`main` dalına her push sonrası site kendiliğinden güncellenir. HTTPS varsayılan olarak
+açıktır; PWA'nın çalışması için bu gereklidir.
+
+### Alternatifler
+
+| Hizmet | Kurulum | Not |
+|---|---|---|
+| Cloudflare Pages | Repoyu bağla, build komutu boş, çıktı dizini `/` | Ücretsiz plan sınırsız bant genişliği |
+| Netlify | Repoyu bağla veya klasörü sürükle-bırak | Sürükle-bırak ile 30 saniyede yayında |
+| Vercel | Repoyu bağla, framework `Other` | Ücretsiz plan kişisel kullanım için yeterli |
+
+Özel alan adı bağlamak isterseniz üçü de ücretsiz destekler (alan adının kendi bedeli hariç).
+
+## Uygulama olarak kurma
+
+Site HTTPS üzerinden açıldığında kurulabilir hâle gelir:
+
+- **Android / Chrome:** sayfadaki "Uygulama olarak yükle" butonu veya menüden *Ana ekrana ekle*
+- **iOS / Safari:** Paylaş → *Ana Ekrana Ekle*
+- **Masaüstü Chrome / Edge:** adres çubuğundaki kurulum simgesi
+
+Kurulduktan sonra tarayıcı arayüzü olmadan, kendi ikonuyla ve çevrimdışı çalışır.
+
+> **Not:** Hesaplama mantığını veya katsayıyı değiştirdiğinizde `sw.js` içindeki `SURUM`
+> değerini artırın (`v2` → `v3`). Aksi hâlde kullanıcıların cihazındaki önbellekte eski
+> sürüm kalabilir.
 
 ## Katsayı güncelleme
 
