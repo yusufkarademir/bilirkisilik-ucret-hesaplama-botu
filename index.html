@@ -3,16 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tüketici Hakem Heyetleri- Bilirkişi Ücret Hesaplama Robotu</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <meta name="description" content="Tüketici Hakem Heyetleri bilirkişilik ücret tarifesine göre brüt ücret, gelir vergisi stopajı, damga vergisi ve net ödenecek tutar hesaplama aracı.">
+    <title>Tüketici Hakem Heyetleri — Bilirkişilik Ücret Hesaplama Robotu</title>
     <style>
+        :root {
+            --mavi: #2980b9;
+            --mavi-acik: #3498db;
+            --lacivert: #2c3e50;
+            --gri: #6c757d;
+            --kenar: #e0e0e0;
+            --yesil: #1e8449;
+            --turuncu: #b9770e;
+        }
+        * { box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             max-width: 900px;
             margin: 0 auto;
             padding: 20px;
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             min-height: 100vh;
+            color: #212529;
         }
         .container {
             background-color: white;
@@ -22,9 +33,9 @@
             animation: fadeIn 0.5s ease-in;
         }
         h1 {
-            color: #2c3e50;
+            color: var(--lacivert);
             text-align: center;
-            margin-bottom: 30px;
+            margin: 0 0 10px;
             font-size: 1.8em;
             line-height: 1.4;
             padding: 15px;
@@ -32,79 +43,81 @@
             border-radius: 10px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
-        .disclaimer {
-            margin-top: 30px;
-            padding: 20px;
-            background-color: #f8f9fa;
-            border-left: 4px solid #3498db;
-            border-radius: 4px;
+        h2 {
+            font-size: 1.15em;
+            color: var(--lacivert);
+            margin: 30px 0 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--kenar);
+        }
+        .donem-bilgi {
+            text-align: center;
+            margin-bottom: 25px;
             font-size: 0.9em;
-            color: #505050;
-            line-height: 1.6;
+            color: var(--gri);
         }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .form-group {
-            margin-bottom: 25px;
-            position: relative;
-        }
+        .form-group { margin-bottom: 22px; position: relative; }
         label {
             display: block;
             margin-bottom: 8px;
-            color: #2c3e50;
+            color: var(--lacivert);
             font-weight: 500;
         }
-        .search-container {
-            position: relative;
-            margin-bottom: 20px;
-        }
-        .search-container i {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #7f8c8d;
-        }
-        #searchInput {
-            width: 100%;
-            padding: 12px 40px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            box-sizing: border-box;
-        }
-        #searchInput:focus {
-            border-color: #3498db;
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
-        }
-        select, input[type="text"] {
+        .search-container { position: relative; margin-bottom: 20px; }
+        select, input[type="text"], input[type="number"] {
             width: 100%;
             padding: 12px;
-            border: 2px solid #e0e0e0;
+            border: 2px solid var(--kenar);
             border-radius: 8px;
             font-size: 16px;
-            transition: all 0.3s ease;
-            box-sizing: border-box;
+            font-family: inherit;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
         select {
             appearance: none;
+            background-color: #fff;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%237f8c8d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
             background-repeat: no-repeat;
             background-position: right 12px center;
             background-size: 16px;
+            padding-right: 40px;
         }
-        select:focus, input[type="text"]:focus {
-            border-color: #3498db;
+        select:focus, input:focus {
+            border-color: var(--mavi-acik);
             outline: none;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.25);
         }
-        select:hover, input[type="text"]:hover {
-            border-color: #bdc3c7;
+        select:hover, input:hover { border-color: #bdc3c7; }
+        .katsayi-satir { display: flex; gap: 10px; align-items: stretch; flex-wrap: wrap; }
+        .katsayi-satir input { flex: 1 1 200px; }
+        button {
+            font-family: inherit;
+            font-size: 15px;
+            padding: 12px 18px;
+            border: 2px solid var(--mavi);
+            background: #fff;
+            color: var(--mavi);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, color 0.2s ease;
+            white-space: nowrap;
         }
+        button:hover { background: var(--mavi); color: #fff; }
+        button:focus-visible { outline: 3px solid rgba(52,152,219,0.5); outline-offset: 2px; }
+        button.ikincil { border-color: var(--gri); color: var(--gri); }
+        button.ikincil:hover { background: var(--gri); color: #fff; }
+        .help-text { color: var(--gri); font-size: 0.88em; margin-top: 6px; line-height: 1.5; }
+        .onay-satir { display: flex; align-items: flex-start; gap: 10px; }
+        .onay-satir input[type="checkbox"] {
+            width: 20px; height: 20px; margin: 2px 0 0; flex-shrink: 0; cursor: pointer;
+            accent-color: var(--mavi);
+        }
+        .onay-satir label { margin: 0; font-weight: 500; cursor: pointer; }
+        .onay-satir .help-text { display: block; font-weight: 400; }
         .result {
             margin-top: 30px;
             padding: 25px;
@@ -112,44 +125,104 @@
             border-radius: 12px;
             display: none;
             box-shadow: 0 2px 15px rgba(0,0,0,0.05);
-            animation: slideIn 0.5s ease-out;
+            animation: slideIn 0.4s ease-out;
         }
         @keyframes slideIn {
             from { opacity: 0; transform: translateY(-20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .result table {
+        .tablo-sar { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        table {
             width: 100%;
             border-collapse: separate;
             border-spacing: 0;
-            margin-top: 15px;
+            margin-top: 12px;
             border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 0 0 1px #e0e0e0;
+            box-shadow: 0 0 0 1px var(--kenar);
         }
-        .result table th, .result table td {
-            padding: 15px;
-            border: none;
+        th, td {
+            padding: 14px 15px;
             text-align: left;
-            border-bottom: 1px solid #e0e0e0;
-            transition: background-color 0.3s ease;
+            border-bottom: 1px solid var(--kenar);
         }
-        .result table tr:last-child td {
-            border-bottom: none;
+        tr:last-child td, tr:last-child th { border-bottom: none; }
+        tbody th {
+            background: #f8f9fa;
+            color: var(--lacivert);
+            font-weight: 500;
+            width: 58%;
         }
-        .result table th {
-            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        td { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+        caption {
+            caption-side: top;
+            text-align: left;
+            font-weight: 600;
+            color: var(--lacivert);
+            padding-bottom: 6px;
+        }
+        tr.vurgu th, tr.vurgu td {
+            background: #eafaf1;
+            font-weight: 700;
+            color: var(--yesil);
+            font-size: 1.05em;
+        }
+        tr.ara th, tr.ara td { background: #fdfdfe; }
+        .rozet {
+            display: inline-block;
+            padding: 3px 10px;
+            background-color: var(--mavi-acik);
             color: white;
+            border-radius: 12px;
+            font-size: 0.62em;
+            vertical-align: middle;
             font-weight: 500;
         }
-        .result table tr:hover td {
-            background-color: #f5f9ff;
+        .category-count {
+            position: absolute;
+            right: 12px;
+            top: 42px;
+            color: var(--gri);
+            font-size: 0.85em;
+            background: #fff;
+            padding: 0 4px;
+            pointer-events: none;
         }
-        .highlight {
-            background-color: #fff3cd;
-            padding: 2px 0;
-            border-radius: 3px;
+        #noResults {
+            display: none;
+            padding: 16px;
+            text-align: center;
+            color: #c0392b;
+            background-color: #fdf3f2;
+            border-radius: 8px;
+            margin: 10px 0;
         }
+        .uyari-kutu {
+            padding: 14px 16px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            line-height: 1.55;
+            margin-top: 14px;
+        }
+        .uyari-tavan { background: #fff8e1; border-left: 4px solid var(--turuncu); color: #7d5a09; }
+        .uyari-istisna { background: #eef7ff; border-left: 4px solid var(--mavi-acik); color: #1b4f72; }
+        .disclaimer {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-left: 4px solid var(--mavi-acik);
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: #505050;
+            line-height: 1.65;
+        }
+        .disclaimer p { margin: 0 0 12px; }
+        .disclaimer p:last-child { margin-bottom: 0; }
+        .disclaimer a { color: var(--mavi); }
+        details.kaynaklar { margin-top: 16px; font-size: 0.9em; }
+        details.kaynaklar summary { cursor: pointer; color: var(--mavi); font-weight: 500; }
+        details.kaynaklar ul { line-height: 1.7; padding-left: 20px; }
+        .eylem-satir { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
         footer {
             margin-top: 40px;
             text-align: center;
@@ -159,124 +232,227 @@
             background: rgba(255, 255, 255, 0.8);
             border-radius: 8px;
         }
-        .info-badge {
-            display: inline-block;
-            padding: 3px 8px;
-            background-color: #3498db;
-            color: white;
-            border-radius: 12px;
-            font-size: 0.8em;
-            margin-left: 8px;
+        .gizli {
+            position: absolute; width: 1px; height: 1px;
+            padding: 0; margin: -1px; overflow: hidden;
+            clip: rect(0,0,0,0); white-space: nowrap; border: 0;
         }
-        .category-count {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #7f8c8d;
-            font-size: 0.9em;
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            .container { padding: 18px 15px; }
+            h1 { font-size: 1.25em; padding: 12px; }
+            .result { padding: 16px 12px; }
+            th, td { padding: 11px 10px; font-size: 0.92em; }
+            tbody th { width: auto; }
+            .category-count { position: static; display: block; margin-top: 6px; text-align: right; }
+            .eylem-satir button { flex: 1 1 100%; }
         }
-        #noResults {
-            display: none;
-            padding: 20px;
-            text-align: center;
-            color: #e74c3c;
-            background-color: #fdf3f2;
-            border-radius: 8px;
-            margin: 10px 0;
+        @media print {
+            body { background: none; padding: 0; max-width: none; }
+            .container { box-shadow: none; padding: 0; animation: none; }
+            .search-container, .form-group, .eylem-satir, footer, details.kaynaklar, #noResults { display: none !important; }
+            .result { display: block !important; box-shadow: none; animation: none; page-break-inside: avoid; }
         }
-        .help-text { color:#6c757d; font-size: 0.9em; margin-top: 6px; }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation: none !important; transition: none !important; }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Tüketici Hakem Heyetleri<br>Bilirkişilik Ücret Hesaplama Robotu<br>
-            <span class="info-badge">2025 Güncel</span>
+        <h1>Tüketici Hakem Heyetleri<br>Bilirkişilik Ücret Hesaplama Robotu
+            <br><span class="rozet" id="donemRozet">Katsayı dönemi yükleniyor</span>
         </h1>
+        <p class="donem-bilgi">
+            Tarife gösterge esaslıdır; ödenecek tutar, göstergenin yürürlükteki
+            <strong>memur aylık katsayısı</strong> ile çarpımından bulunur.
+        </p>
 
+        <h2>1. Memur aylık katsayısı</h2>
+        <div class="form-group">
+            <label for="memurKatsayi">Memur aylık katsayısı</label>
+            <div class="katsayi-satir">
+                <input type="text" id="memurKatsayi" inputmode="decimal"
+                       placeholder="Örn: 1,575512" aria-describedby="katsayiYardim">
+                <button type="button" id="guncelKatsayiBtn">Güncel dönemi uygula</button>
+            </div>
+            <div class="help-text" id="katsayiYardim">
+                Katsayı her yıl Ocak ve Temmuz aylarında Hazine ve Maliye Bakanlığı genelgesiyle değişir.
+                Butondaki değer <strong id="guncelDonemMetin">—</strong> dönemine aittir; başka bir dönem için
+                değeri elle giriniz. Girdiğiniz değer tarayıcınızda saklanır.
+            </div>
+        </div>
+
+        <h2>2. Uyuşmazlık konusu</h2>
         <div class="search-container">
-            <i class="fas fa-search"></i>
-            <input type="text" id="searchInput" placeholder="Ürün veya hizmet ara..." onkeyup="filterCategories()">
+            <label for="searchInput">Kategori ara</label>
+            <input type="text" id="searchInput" placeholder="Ürün veya hizmet adı yazın…"
+                   autocomplete="off" aria-describedby="categoryCount">
+            <span class="category-count" id="categoryCount" aria-live="polite"></span>
+        </div>
+
+        <div id="noResults" role="status">
+            Aramanızla eşleşen sonuç bulunamadı.
         </div>
 
         <div class="form-group">
-            <label for="memurKatsayi">Memur Aylık Katsayısı:</label>
-            <input type="text" id="memurKatsayi" placeholder="Örn: 0,907796" oninput="onKatsayiChange()">
-            <div class="help-text">Brüt ücret = Gösterge × Memur Aylık Katsayısı</div>
-        </div>
-
-        
-
-        <div class="form-group">
-            <label for="urunKategori">Ürün/Hizmet Kategorisi:</label>
-            <select id="urunKategori" onchange="hesapla()">
-                <option value="">Seçiniz...</option>
+            <label for="urunKategori">Ürün/hizmet kategorisi</label>
+            <select id="urunKategori">
+                <option value="">Seçiniz…</option>
             </select>
-            <span class="category-count" id="categoryCount"></span>
         </div>
 
-        <div id="noResults">
-            <i class="fas fa-exclamation-circle"></i> Aramanızla eşleşen sonuç bulunamadı.
+        <div class="form-group">
+            <label for="gostergeArtirim">Gösterge artırımı (0–500)</label>
+            <input type="number" id="gostergeArtirim" min="0" max="500" step="1" value="0"
+                   aria-describedby="artirimYardim">
+            <div class="help-text" id="artirimYardim">
+                Tarife uyarınca; uyuşmazlığın niteliği, dosyanın kapsamı, bilirkişinin vasfı veya ilgili
+                uzmanlık alanında bilirkişi temininde yaşanan güçlük dikkate alınarak gösterge sayısı
+                <strong>en fazla 500</strong> artırılabilir. Takdir hakem heyetine aittir.
+            </div>
         </div>
 
-        <div class="result" id="sonuc">
-            <h3>Hesaplama Sonucu:</h3>
-            <table>
-                <tr>
-                    <th>Bilirkişi Ücreti (Brüt)</th>
-                    <td id="bilirkisiUcreti">-</td>
-                </tr>
-                <tr>
-                    <th>KDV Dahil Tutar</th>
-                    <td id="kdvDahil">-</td>
-                </tr>
-                <tr>
-                    <th>Stopaj (%20)</th>
-                    <td id="stopaj">-</td>
-                </tr>
-                <tr>
-                    <th>Damga Vergisi (binde 9,48)</th>
-                    <td id="damgaVergisi">-</td>
-                </tr>
-                <tr>
-                    <th>Net Ödenecek Tutar</th>
-                    <td id="netTutar">-</td>
-                </tr>
-            </table>
+        <h2>3. Vergi seçenekleri</h2>
+        <div class="form-group onay-satir">
+            <input type="checkbox" id="kdvUygula">
+            <label for="kdvUygula">
+                KDV mükellefi olarak serbest meslek makbuzu düzenliyorum (%20 KDV eklensin)
+                <span class="help-text" style="margin-top:4px;">
+                    Bilirkişi ücreti kural olarak GVK md. 61 uyarınca <strong>ücret</strong> sayılır ve KDV'ye tabi
+                    değildir. Bu kutuyu yalnızca faaliyetiniz nedeniyle KDV mükellefiyseniz işaretleyin.
+                </span>
+            </label>
+        </div>
+
+        <div class="result" id="sonuc" role="region" aria-live="polite" aria-label="Hesaplama sonucu">
+            <div class="tablo-sar">
+                <table>
+                    <caption>Gösterge ve brüt ücret</caption>
+                    <tbody>
+                        <tr>
+                            <th scope="row">Tarife göstergesi</th>
+                            <td id="tabanGosterge">—</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Gösterge artırımı</th>
+                            <td id="artirimGosterge">—</td>
+                        </tr>
+                        <tr class="ara">
+                            <th scope="row">Uygulanan gösterge</th>
+                            <td id="toplamGosterge">—</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Brüt bilirkişi ücreti</th>
+                            <td id="bilirkisiUcreti">—</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="uyari-kutu uyari-tavan" id="tavanUyari" style="display:none;"></div>
+
+            <div class="tablo-sar">
+                <table>
+                    <caption>Kesintiler ve net tutar</caption>
+                    <tbody>
+                        <tr id="kdvSatir" style="display:none;">
+                            <th scope="row">KDV (%20)</th>
+                            <td id="kdvTutar">—</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Gelir vergisi stopajı (<span id="stopajOranMetin">%15</span>)</th>
+                            <td id="stopaj">—</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Damga vergisi (binde 7,59)</th>
+                            <td id="damgaVergisi">—</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Toplam kesinti</th>
+                            <td id="toplamKesinti">—</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Kesinti yapılırsa net tutar</th>
+                            <td id="netTutar">—</td>
+                        </tr>
+                        <tr class="vurgu">
+                            <th scope="row">Asgari ücret istisnası uygulanırsa net tutar</th>
+                            <td id="netIstisnali">—</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="uyari-kutu uyari-istisna" id="istisnaUyari"></div>
+
+            <div class="eylem-satir">
+                <button type="button" id="kopyalaBtn" class="ikincil">Sonucu kopyala</button>
+                <button type="button" id="yazdirBtn" class="ikincil">Yazdır / PDF</button>
+            </div>
         </div>
 
         <div class="disclaimer">
-            <p><strong>Önemli Bilgilendirme:</strong></p>
-            <p>Bu hesaplama robotu, 6502 sayılı Kanun ve Tüketici Hakem Heyetleri Bilirkişilik Yönetmeliği çerçevesinde Ticaret Bakanlığınca yayımlanan tarifedeki gösterge değerlerini esas alır. Brüt tutar, seçilen kategori için gösterge × memur aylık katsayısıdır.</p>
-            <p>Memur aylık katsayısı dönemsel olarak değişir. Lütfen geçerli katsayıyı resmi kaynaklardan teyit ederek giriniz. Sonuçlar bilgilendirme amaçlıdır; nihai ödemeler ilgili kurum uygulamalarına tabidir.</p>
+            <p><strong>Önemli bilgilendirme</strong></p>
+            <p>
+                Bu araç, 6502 sayılı Tüketici Koruması Hakkında Kanun ve Tüketici Hakem Heyetleri Bilirkişilik
+                Yönetmeliği çerçevesinde Ticaret Bakanlığınca yayımlanan <strong>Tüketici Hakem Heyetleri
+                Bilirkişilik Ücret Tarifesi</strong>'ni esas alır. Tarife 1/1/2021 tarihinde yürürlüğe girmiştir ve
+                tutarları TL olarak değil <strong>gösterge</strong> olarak belirler; bu nedenle gösterge değerleri
+                yıllık olarak değişmez, ödenen tutar memur aylık katsayısı değiştikçe kendiliğinden güncellenir.
+            </p>
+            <p>
+                Tarife uyarınca inceleme başına toplam brüt ücret <strong>3.000 göstergeyi</strong> aşamaz.
+                Artırım dâhil hesaplanan gösterge bu sınırı aşarsa tavan uygulanır.
+            </p>
+            <p>
+                <strong>Vergilendirme:</strong> Bilirkişilere yapılan ödemeler GVK md. 61 uyarınca ücret sayılır;
+                bu tutardan gelir vergisi ve damga vergisi kesilir, <strong>KDV hesaplanmaz</strong>. Gelir vergisi
+                stopajı GVK md. 103'teki tarifeye göre uygulanır; varsayılan olarak ilk dilim (%15) alınmıştır.
+                Damga vergisi, ücret ödemeleri için geçerli binde 7,59 oranı üzerinden hesaplanır.
+            </p>
+            <p>
+                <strong>Asgari ücret istisnası:</strong> 1/1/2022'den itibaren, ücret sayılan ödemelerin aylık brüt
+                asgari ücrete isabet eden kısmı gelir vergisinden ve damga vergisinden istisnadır. Bir bilirkişi
+                ücreti tek başına brüt asgari ücretin çok altında kaldığından, aynı ödeyiciden o ay başka ücret
+                geliriniz yoksa kesinti yapılmaması gerekir. Kaynakta kesinti yapılmışsa iade talep edilebilir.
+                Kesintinin nihai tutarı, ödemeyi yapan idarenin uygulamasına ve o ay içindeki kümülatif matrahınıza
+                göre değişir.
+            </p>
+            <p>
+                Sonuçlar bilgilendirme amaçlıdır, mali veya hukuki danışmanlık niteliği taşımaz ve kesin ödeme
+                tutarını garanti etmez. Resmî işlemler için güncel mevzuatı ve ilgili kurumun uygulamasını teyit
+                ediniz.
+            </p>
+
+            <details class="kaynaklar">
+                <summary>Kaynaklar ve mevzuat</summary>
+                <ul>
+                    <li><a href="https://tuketici.ticaret.gov.tr/duyurular/tuketici-hakem-heyetleri-bilirkisilik-ucret-tarifesi" target="_blank" rel="noopener">Ticaret Bakanlığı — Tüketici Hakem Heyetleri Bilirkişilik Ücret Tarifesi</a></li>
+                    <li><a href="https://www.mevzuat.gov.tr/File/GeneratePdf?mevzuatNo=34683&amp;mevzuatTur=KurumVeKurulusYonetmeligi&amp;mevzuatTertip=5" target="_blank" rel="noopener">Tüketici Hakem Heyetleri Bilirkişilik Yönetmeliği (mevzuat.gov.tr)</a></li>
+                    <li><a href="https://ms.hmb.gov.tr/" target="_blank" rel="noopener">Hazine ve Maliye Bakanlığı — Mali ve Sosyal Haklara İlişkin Genelgeler (memur aylık katsayısı)</a></li>
+                </ul>
+            </details>
         </div>
     </div>
 
     <footer>
-        <p>© 2025 THH Bilirkişi Ücret Hesaplama Robotu</p>
+        <p>THH Bilirkişi Ücret Hesaplama Robotu — <span id="footerDonem">—</span></p>
     </footer>
 
     <script>
-        function formatPrice(number) {
-            return number.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' TL';
-        }
+        'use strict';
 
-        function animateNumber(element, start, end, duration) {
-            if (element._animation) clearInterval(element._animation);
-            let startTime = null;
-            element._animation = setInterval(() => {
-                if (!startTime) startTime = Date.now();
-                const progress = (Date.now() - startTime) / duration;
-                if (progress >= 1) {
-                    clearInterval(element._animation);
-                    element._animation = null;
-                    element.textContent = formatPrice(end);
-                    return;
-                }
-                const current = start + (end - start) * progress;
-                element.textContent = formatPrice(current);
-            }, 16);
-        }
+        // ---- Yürürlükteki memur aylık katsayısı -------------------------------
+        // Kaynak: Hazine ve Maliye Bakanlığı Mali ve Sosyal Haklara İlişkin Genelge (3/7/2026).
+        // Yeni dönem genelgesi yayımlandığında yalnızca bu iki satırı güncelleyin.
+        const GUNCEL_KATSAYI = 1.575512;
+        const GUNCEL_DONEM = '1 Temmuz – 31 Aralık 2026';
+
+        // ---- Tarife ve vergi sabitleri ---------------------------------------
+        const GOSTERGE_TAVAN = 3000;      // Tarife: inceleme başına toplam brüt ücret üst sınırı
+        const ARTIRIM_TAVAN = 500;        // Tarife: azami gösterge artırımı
+        const STOPAJ_ORAN = 0.15;         // GVK md. 103 ücret tarifesi ilk dilimi
+        const DAMGA_ORAN = 0.00759;       // Ücret ödemelerinde damga vergisi: binde 7,59
+        const KDV_ORAN = 0.20;            // Yalnızca KDV mükellefi bilirkişiler için
 
         // Gösterge değerleri (kategori: gösterge)
         const urunlerData = {
@@ -577,178 +753,289 @@
             "Diğer mallar": 800
         };
 
-        function saveKatsayi(value) { try { localStorage.setItem('memurKatsayi', value); } catch (e) {} }
-        function loadKatsayi() { try { return localStorage.getItem('memurKatsayi') || ''; } catch (e) { return ''; } }
+        // ---- Yardımcılar -----------------------------------------------------
+        function formatPrice(number) {
+            return number.toLocaleString('tr-TR', {
+                minimumFractionDigits: 2, maximumFractionDigits: 2
+            }) + ' TL';
+        }
+
+        function formatGosterge(number) {
+            return number.toLocaleString('tr-TR') + ' gösterge';
+        }
+
         function parseKatsayi(v) {
-            if (!v) return NaN;
-            const val = String(v).trim().replace(',', '.');
+            if (v === null || v === undefined) return NaN;
+            const val = String(v).trim().replace(/\s/g, '').replace(',', '.');
+            if (val === '') return NaN;
             return Number(val);
         }
 
-        function onKatsayiChange() {
-            const input = document.getElementById('memurKatsayi');
-            saveKatsayi(input.value);
-            hesapla();
+        function store(key, value) {
+            try { localStorage.setItem(key, value); } catch (e) { /* özel mod */ }
+        }
+        function load(key, fallback) {
+            try {
+                const v = localStorage.getItem(key);
+                return v === null ? fallback : v;
+            } catch (e) { return fallback; }
         }
 
-        window.onload = function() {
-            const select = document.getElementById('urunKategori');
-            const categoryCount = document.getElementById('categoryCount');
-            const katsayiInput = document.getElementById('memurKatsayi');
-            const sortedUrunler = Object.keys(urunlerData).sort((a,b)=>a.localeCompare(b,'tr'));
-
-            katsayiInput.value = loadKatsayi();
-
-            sortedUrunler.forEach(urun => {
-                const option = document.createElement('option');
-                option.value = urun;
-                option.textContent = urun;
-                select.appendChild(option);
-            });
-
-            categoryCount.textContent = `${sortedUrunler.length} kategori`;
-            // Arkaplanda katsayıyı otomatik getirmeyi dene (sessiz).
-            autoFetchKatsayi(true);
-        };
-
-        function filterCategories() {
-            const input = document.getElementById('searchInput');
-            const filter = input.value.toLowerCase();
-            const select = document.getElementById('urunKategori');
-            const noResults = document.getElementById('noResults');
-            let matchCount = 0;
-
-            select.innerHTML = '<option value="">Seçiniz...</option>';
-
-            Object.keys(urunlerData).sort((a,b)=>a.localeCompare(b,'tr')).forEach(urun => {
-                if (urun.toLowerCase().includes(filter)) {
-                    const option = document.createElement('option');
-                    option.value = urun;
-                    option.textContent = urun;
-                    select.appendChild(option);
-                    matchCount++;
-                }
-            });
-
-            document.getElementById('categoryCount').textContent = `${matchCount} kategori`;
-            noResults.style.display = matchCount === 0 ? 'block' : 'none';
-
-            if (matchCount === 1) {
-                select.selectedIndex = 1;
-                hesapla();
+        function animateNumber(element, end, formatter) {
+            const duration = 400;
+            const start = element._deger || 0;
+            element._deger = end;
+            if (element._animation) cancelAnimationFrame(element._animation);
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                element.textContent = formatter(end);
+                return;
             }
+            const startTime = performance.now();
+            const adim = (now) => {
+                const progress = Math.min((now - startTime) / duration, 1);
+                const current = start + (end - start) * progress;
+                element.textContent = formatter(progress >= 1 ? end : current);
+                if (progress < 1) {
+                    element._animation = requestAnimationFrame(adim);
+                } else {
+                    element._animation = null;
+                }
+            };
+            element._animation = requestAnimationFrame(adim);
         }
 
+        // ---- Hesaplama -------------------------------------------------------
         function hesapla() {
             const select = document.getElementById('urunKategori');
             const sonuc = document.getElementById('sonuc');
             const katsayi = parseKatsayi(document.getElementById('memurKatsayi').value);
+            const kdvVar = document.getElementById('kdvUygula').checked;
 
             if (!select.value || !(katsayi > 0)) {
                 sonuc.style.display = 'none';
                 return;
             }
 
-            const gosterge = urunlerData[select.value];
-            const KDV_ORAN = 0.20;
-            const STOPAJ_ORAN = 0.20;
-            const DAMGA_ORAN = 0.00948; // binde 9,48
+            const tabanGosterge = urunlerData[select.value];
+            if (tabanGosterge === undefined) {
+                sonuc.style.display = 'none';
+                return;
+            }
 
-            // Brüt = gösterge × katsayı; üst sınır: 3000 × katsayı
-            const brutHesap = gosterge * katsayi;
-            const brutUcret = Math.min(brutHesap, 3000 * katsayi);
+            // Artırım: 0–500 aralığına kıstır
+            const artirimInput = document.getElementById('gostergeArtirim');
+            let artirim = parseInt(artirimInput.value, 10);
+            if (!isFinite(artirim) || artirim < 0) artirim = 0;
+            if (artirim > ARTIRIM_TAVAN) artirim = ARTIRIM_TAVAN;
 
-            const kdvTutar = brutUcret * KDV_ORAN;
+            // Toplam gösterge, tarife tavanı ile sınırlı
+            const hamGosterge = tabanGosterge + artirim;
+            const uygulananGosterge = Math.min(hamGosterge, GOSTERGE_TAVAN);
+            const tavanaTakildi = hamGosterge > GOSTERGE_TAVAN;
+
+            const brutUcret = uygulananGosterge * katsayi;
+            const kdvTutar = kdvVar ? brutUcret * KDV_ORAN : 0;
             const stopajTutar = brutUcret * STOPAJ_ORAN;
             const damgaTutar = brutUcret * DAMGA_ORAN;
-            const kdvDahilToplam = brutUcret + kdvTutar;
-            const netOdenecek = brutUcret + kdvTutar - stopajTutar - damgaTutar;
+            const toplamKesinti = stopajTutar + damgaTutar;
+            const netKesintili = brutUcret + kdvTutar - toplamKesinti;
+            const netIstisnali = brutUcret + kdvTutar;
 
-            const elements = {
-                bilirkisiUcreti: document.getElementById('bilirkisiUcreti'),
-                kdvDahil: document.getElementById('kdvDahil'),
-                stopaj: document.getElementById('stopaj'),
-                damgaVergisi: document.getElementById('damgaVergisi'),
-                netTutar: document.getElementById('netTutar')
-            };
+            // Gösterge satırları (animasyonsuz, tam sayı)
+            document.getElementById('tabanGosterge').textContent = formatGosterge(tabanGosterge);
+            document.getElementById('artirimGosterge').textContent = formatGosterge(artirim);
+            document.getElementById('toplamGosterge').textContent = formatGosterge(uygulananGosterge);
 
-            const currentValues = Object.keys(elements).reduce((acc, key) => {
-                const text = elements[key].textContent.replace(/[^0-9,]/g, '').replace(',', '.');
-                acc[key] = parseFloat(text) || 0;
-                return acc;
-            }, {});
+            const tavanUyari = document.getElementById('tavanUyari');
+            if (tavanaTakildi) {
+                tavanUyari.style.display = 'block';
+                tavanUyari.textContent =
+                    'Taban gösterge ve artırım toplamı ' + formatGosterge(hamGosterge) + ' etmektedir. ' +
+                    'Tarifedeki ' + formatGosterge(GOSTERGE_TAVAN) + ' üst sınırı nedeniyle hesaplama ' +
+                    formatGosterge(GOSTERGE_TAVAN) + ' üzerinden yapılmıştır.';
+            } else {
+                tavanUyari.style.display = 'none';
+            }
 
-            const values = [
-                brutUcret,
-                kdvDahilToplam,
-                stopajTutar,
-                damgaTutar,
-                netOdenecek
+            // KDV satırı yalnızca işaretliyse
+            document.getElementById('kdvSatir').style.display = kdvVar ? '' : 'none';
+
+            const paraSatirlari = [
+                ['bilirkisiUcreti', brutUcret],
+                ['kdvTutar', kdvTutar],
+                ['stopaj', stopajTutar],
+                ['damgaVergisi', damgaTutar],
+                ['toplamKesinti', toplamKesinti],
+                ['netTutar', netKesintili],
+                ['netIstisnali', netIstisnali]
             ];
-
-            Object.keys(elements).forEach((key, index) => {
-                const element = elements[key];
-                const startValue = currentValues[key];
-                const endValue = values[index];
-                animateNumber(element, startValue, endValue, 500);
+            paraSatirlari.forEach(function (satir) {
+                animateNumber(document.getElementById(satir[0]), satir[1], formatPrice);
             });
+
+            document.getElementById('istisnaUyari').innerHTML =
+                '<strong>Hangi satır geçerli?</strong> Bilirkişi ücreti ücret sayılan bir ödemedir ve aylık brüt ' +
+                'asgari ücrete kadar olan kısmı gelir vergisinden ve damga vergisinden istisnadır. Bu ücret ' +
+                'asgari ücretin altında kaldığı için, aynı ödeyiciden o ay başka ücret geliriniz yoksa ' +
+                '<strong>kesinti yapılmaması</strong> beklenir. Kesinti yapılmışsa iade talep edebilirsiniz.';
 
             sonuc.style.display = 'block';
         }
 
-        // ---- Otomatik Katsayı Getirme (pdf.js ile) ----
-        async function autoFetchKatsayi(silent = false) {
-            // Denenecek muhtemel resmi kaynak PDF adresleri (sıralı)
-            const candidateUrls = [
-                // Verdiğiniz bağlantı (Mahalli İdare Sözleşmeli Personel genelgesi)
-                'https://ms.hmb.gov.tr/uploads/2025/07/2025-Yili-Temmuz-Ayi-Mahalli-Idare-Sozlesmeli-Personeli-Ucretleri-Hakkinda-Genelge-2d14e09491dd7ae4.pdf',
-                // Muhtemel Mali ve Sosyal Haklar genelgeleri (Ocak/Temmuz)
-                'https://ms.hmb.gov.tr/uploads/2025/07/2025-Yili-Temmuz-Ayi-Mali-ve-Sosyal-Haklar-Genelgesi.pdf',
-                'https://ms.hmb.gov.tr/uploads/2025/01/2025-Yili-Ocak-Ayi-Mali-ve-Sosyal-Haklar-Genelgesi.pdf'
-            ];
+        // ---- Kategori listesi ------------------------------------------------
+        const siraliUrunler = Object.keys(urunlerData).sort(function (a, b) {
+            return a.localeCompare(b, 'tr');
+        });
 
-            try {
-                if (!window['pdfjsLib']) throw new Error('pdf.js yüklü değil');
-                pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        function listeyiDoldur(filtre) {
+            const select = document.getElementById('urunKategori');
+            const noResults = document.getElementById('noResults');
+            const oncekiSecim = select.value;
+            const arama = (filtre || '').toLocaleLowerCase('tr');
 
-                let foundValue = null;
-                for (const url of candidateUrls) {
-                    try {
-                        const loadingTask = pdfjsLib.getDocument({ url, withCredentials:false });
-                        const pdf = await loadingTask.promise;
-                        let fullText = '';
-                        const maxPages = Math.min(pdf.numPages, 10);
-                        for (let i=1; i<=maxPages; i++) {
-                            const page = await pdf.getPage(i);
-                            const textContent = await page.getTextContent();
-                            const pageText = textContent.items.map(it => it.str).join(' ');
-                            fullText += '\n' + pageText;
-                        }
-                        const patterns = [
-                            /Memur\s*Ayl[ıi]k\s*Katsay[ıi]\s*[:\-]?\s*([0-9]+[\.,][0-9]+)/i,
-                            /Ayl[ıi]k\s*Katsay[ıi]\s*[:\-]?\s*([0-9]+[\.,][0-9]+)/i,
-                            /Memur\s*Katsay[ıi]\s*[:\-]?\s*([0-9]+[\.,][0-9]+)/i
-                        ];
-                        for (const re of patterns) {
-                            const m = fullText.match(re);
-                            if (m && m[1]) { foundValue = m[1]; break; }
-                        }
-                        if (foundValue) break; // bir url’de bulduk, dur
-                    } catch (_) {
-                        // sıradaki adayı dene
-                    }
-                }
+            const eslesenler = arama
+                ? siraliUrunler.filter(function (u) {
+                      return u.toLocaleLowerCase('tr').includes(arama);
+                  })
+                : siraliUrunler;
 
-                if (!foundValue) return; // sessiz başarısızlık, kullanıcıyı rahatsız etmeyelim
+            select.innerHTML = '<option value="">Seçiniz…</option>';
+            eslesenler.forEach(function (urun) {
+                const option = document.createElement('option');
+                option.value = urun;
+                option.textContent = urun + ' (' + urunlerData[urun] + ')';
+                select.appendChild(option);
+            });
 
-                const katsayiInput = document.getElementById('memurKatsayi');
-                katsayiInput.value = String(foundValue).replace(/\s/g,'');
-                onKatsayiChange();
-            } catch (_) {
-                // tamamen sessiz kal
+            document.getElementById('categoryCount').textContent =
+                eslesenler.length + ' kategori';
+            noResults.style.display = eslesenler.length === 0 ? 'block' : 'none';
+
+            // Önceki seçim listede duruyorsa koru; tek sonuç kaldıysa onu seç
+            if (oncekiSecim && eslesenler.indexOf(oncekiSecim) !== -1) {
+                select.value = oncekiSecim;
+            } else if (eslesenler.length === 1) {
+                select.selectedIndex = 1;
             }
+            hesapla();
         }
+
+        // ---- Sonucu kopyalama ------------------------------------------------
+        function sonucMetni() {
+            const kategori = document.getElementById('urunKategori').value;
+            const satirlar = [
+                'Tüketici Hakem Heyetleri — Bilirkişilik Ücreti',
+                'Kategori: ' + kategori,
+                'Memur aylık katsayısı: ' + document.getElementById('memurKatsayi').value,
+                'Uygulanan gösterge: ' + document.getElementById('toplamGosterge').textContent,
+                'Brüt ücret: ' + document.getElementById('bilirkisiUcreti').textContent
+            ];
+            if (document.getElementById('kdvUygula').checked) {
+                satirlar.push('KDV (%20): ' + document.getElementById('kdvTutar').textContent);
+            }
+            satirlar.push(
+                'Gelir vergisi stopajı (%15): ' + document.getElementById('stopaj').textContent,
+                'Damga vergisi (binde 7,59): ' + document.getElementById('damgaVergisi').textContent,
+                'Kesinti yapılırsa net: ' + document.getElementById('netTutar').textContent,
+                'Asgari ücret istisnası uygulanırsa net: ' + document.getElementById('netIstisnali').textContent
+            );
+            return satirlar.join('\n');
+        }
+
+        function kopyalaGeriBildirim(btn, mesaj) {
+            const eski = btn.textContent;
+            btn.textContent = mesaj;
+            setTimeout(function () { btn.textContent = eski; }, 1800);
+        }
+
+        // ---- Başlatma --------------------------------------------------------
+        window.addEventListener('DOMContentLoaded', function () {
+            const katsayiInput = document.getElementById('memurKatsayi');
+            const artirimInput = document.getElementById('gostergeArtirim');
+            const kdvInput = document.getElementById('kdvUygula');
+            const searchInput = document.getElementById('searchInput');
+            const guncelDonemMetni = GUNCEL_DONEM + ' dönemi katsayısı: ' +
+                GUNCEL_KATSAYI.toLocaleString('tr-TR', { minimumFractionDigits: 6 });
+
+            document.getElementById('donemRozet').textContent = GUNCEL_DONEM;
+            document.getElementById('guncelDonemMetin').textContent = GUNCEL_DONEM;
+            document.getElementById('footerDonem').textContent = guncelDonemMetni;
+            document.getElementById('stopajOranMetin').textContent =
+                '%' + (STOPAJ_ORAN * 100).toLocaleString('tr-TR');
+
+            // Saklanan tercihleri geri yükle; katsayı yoksa güncel dönemi kullan
+            katsayiInput.value = load('memurKatsayi',
+                String(GUNCEL_KATSAYI).replace('.', ','));
+            artirimInput.value = load('gostergeArtirim', '0');
+            kdvInput.checked = load('kdvUygula', '0') === '1';
+
+            listeyiDoldur('');
+
+            const kayitliKategori = load('urunKategori', '');
+            if (kayitliKategori && urunlerData[kayitliKategori] !== undefined) {
+                document.getElementById('urunKategori').value = kayitliKategori;
+            }
+            hesapla();
+
+            katsayiInput.addEventListener('input', function () {
+                store('memurKatsayi', katsayiInput.value);
+                hesapla();
+            });
+
+            document.getElementById('guncelKatsayiBtn').addEventListener('click', function () {
+                katsayiInput.value = String(GUNCEL_KATSAYI).replace('.', ',');
+                store('memurKatsayi', katsayiInput.value);
+                hesapla();
+                katsayiInput.focus();
+            });
+
+            artirimInput.addEventListener('input', function () {
+                store('gostergeArtirim', artirimInput.value);
+                hesapla();
+            });
+
+            kdvInput.addEventListener('change', function () {
+                store('kdvUygula', kdvInput.checked ? '1' : '0');
+                hesapla();
+            });
+
+            document.getElementById('urunKategori').addEventListener('change', function (e) {
+                store('urunKategori', e.target.value);
+                hesapla();
+            });
+
+            searchInput.addEventListener('input', function () {
+                listeyiDoldur(searchInput.value);
+            });
+
+            document.getElementById('yazdirBtn').addEventListener('click', function () {
+                window.print();
+            });
+
+            document.getElementById('kopyalaBtn').addEventListener('click', function () {
+                const btn = this;
+                const metin = sonucMetni();
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(metin).then(
+                        function () { kopyalaGeriBildirim(btn, 'Kopyalandı'); },
+                        function () { kopyalaGeriBildirim(btn, 'Kopyalanamadı'); }
+                    );
+                } else {
+                    // file:// veya http üzerinden açıldığında yedek yöntem
+                    const ta = document.createElement('textarea');
+                    ta.value = metin;
+                    ta.setAttribute('readonly', '');
+                    ta.style.position = 'absolute';
+                    ta.style.left = '-9999px';
+                    document.body.appendChild(ta);
+                    ta.select();
+                    let ok = false;
+                    try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+                    document.body.removeChild(ta);
+                    kopyalaGeriBildirim(btn, ok ? 'Kopyalandı' : 'Kopyalanamadı');
+                }
+            });
+        });
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 </body>
 </html>
